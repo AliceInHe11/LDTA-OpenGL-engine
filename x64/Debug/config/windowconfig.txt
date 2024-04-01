@@ -1,0 +1,3 @@
+0	// settings window mode (1 - fullscren, 0 - window screen)
+1280	// width resolution 
+720	// height resolution 
