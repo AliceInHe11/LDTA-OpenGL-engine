@@ -1,3 +1,3 @@
-20	// shadow range (set 0 to disable shadow)
+10	// shadow range (set 0 to disable shadow)
 4096	// shadow width
 4096	// shadow height

@@ -57,7 +57,7 @@ int main()
 
     // build and compile shaders
     // -------------------------
-    Shader ShadowMapshader("resources/shaders/shadow_mapping.vs", "resources/shaders/shadow_mapping.fs");
+    Shader ShadowMapShader("resources/shaders/shadow_mapping.vs", "resources/shaders/shadow_mapping.fs");
     Shader simpleDepthShader("resources/shaders/shadow_mapping_depth.vs", "resources/shaders/shadow_mapping_depth.fs");
     Shader debugDepthQuad("resources/shaders/debug_quad.vs", "resources/shaders/debug_quad_depth.fs");
     Shader skyboxShader("resources/shaders/skybox.vs", "resources/shaders/skybox.fs");
@@ -206,9 +206,9 @@ int main()
 
     // shader configuration
     // --------------------
-    ShadowMapshader.use();
-    ShadowMapshader.setInt("diffuseTexture", 0);
-    ShadowMapshader.setInt("shadowMap", 1);
+    ShadowMapShader.use();
+    ShadowMapShader.setInt("diffuseTexture", 0);
+    ShadowMapShader.setInt("shadowMap", 1);
     debugDepthQuad.use();
     debugDepthQuad.setInt("depthMap", 0);
     normalmapShader.use();
@@ -283,7 +283,7 @@ int main()
         normalmapShader.setVec3("viewPos", camera.Position);
         normalmapShader.setVec3("lightPos", lightPos);
         renderModel(normalmapShader, ModelList);
-        //renderScene(ShadowMapshader, Texture);
+        //renderScene(normalmapShader, Texture);
         // render light source (simply re-renders a smaller plane at the light's position for debugging/visualization)
         /*glm::mat4 model = glm::mat4(1.0f);
         model = glm::translate(model, lightPos);
@@ -292,19 +292,19 @@ int main()
 
         // 3. render scene as normal using the generated depth/shadow map  
         // --------------------------------------------------------------
-        ShadowMapshader.use();
-        ShadowMapshader.setMat4("projection", projection);
-        ShadowMapshader.setMat4("view", view);
+        ShadowMapShader.use();
+        ShadowMapShader.setMat4("projection", projection);
+        ShadowMapShader.setMat4("view", view);
         // set light uniforms
-        ShadowMapshader.setVec3("viewPos", camera.Position);
-        ShadowMapshader.setVec3("lightPos", lightPos);
-        ShadowMapshader.setMat4("lightSpaceMatrix", lightSpaceMatrix);
+        ShadowMapShader.setVec3("viewPos", camera.Position);
+        ShadowMapShader.setVec3("lightPos", lightPos);
+        ShadowMapShader.setMat4("lightSpaceMatrix", lightSpaceMatrix);
         /*glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, Texture[0]);*/
         glActiveTexture(GL_TEXTURE1);
         glBindTexture(GL_TEXTURE_2D, depthMap);
-        renderScene(ShadowMapshader, Texture);
-        //renderModel(ShadowMapshader, ModelList);
+        renderScene(ShadowMapShader, Texture);
+        //renderModel(ShadowMapShader, ModelList);
 
         // 4. render skybox as last
         // ----------------------

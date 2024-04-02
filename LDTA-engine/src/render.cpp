@@ -185,7 +185,7 @@ void renderModel(Shader& shader, vector <Model>& ModelList)
 
     model = glm::mat4(1.0f);
     model = glm::translate(model, glm::vec3(-1.75f, 0.5f, 1.0f));
-    //model = glm::rotate(model, glm::radians((float)-glfwGetTime() * 300.0f), glm::normalize(glm::vec3(0.0, 1.0, 0.0)));
+    model = glm::rotate(model, glm::radians((float)glfwGetTime() * 50.0f), glm::normalize(glm::vec3(0.0, 1.0, 0.0)));
     model = glm::scale(model, glm::vec3(0.15f));
     shader.setMat4("model", model);
     ModelList[6].Draw(shader);
