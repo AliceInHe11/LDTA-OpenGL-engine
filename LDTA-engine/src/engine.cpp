@@ -77,6 +77,7 @@ int main()
     ModelList.push_back(Model("resources/objects/cyborg/cyborg.obj"));
     ModelList.push_back(Model("resources/objects/planet/planet.obj"));
     ModelList.push_back(Model("resources/objects/nanosuit/nanosuit.obj"));
+    ModelList.push_back(Model("resources/objects/sponza/sponza.obj"));
 
     // load textures
     // -------------
@@ -216,7 +217,7 @@ int main()
 
     // lighting info
     // -------------
-    glm::vec3 lightPos(-2.0f, 10.0f, 4.0f);
+    glm::vec3 lightPos(3.0f, 10.0f, 3.0f);
 
     cout << "Em Oi Lau Dai Tinh Ai Doooooooo.........!!!!!!!!!!";
 
@@ -274,14 +275,15 @@ int main()
         glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
         glm::mat4 view = camera.GetViewMatrix();
 
-        // 2. render normal-mapped scene  
-        // --------------------------
+        // 2. render model normal-mapped   
+        // -----------------------------
         normalmapShader.use();
         normalmapShader.setMat4("projection", projection);
         normalmapShader.setMat4("view", view);
         normalmapShader.setVec3("viewPos", camera.Position);
         normalmapShader.setVec3("lightPos", lightPos);
         renderModel(normalmapShader, ModelList);
+        //renderScene(ShadowMapshader, Texture);
         // render light source (simply re-renders a smaller plane at the light's position for debugging/visualization)
         /*glm::mat4 model = glm::mat4(1.0f);
         model = glm::translate(model, lightPos);
@@ -302,7 +304,7 @@ int main()
         glActiveTexture(GL_TEXTURE1);
         glBindTexture(GL_TEXTURE_2D, depthMap);
         renderScene(ShadowMapshader, Texture);
-        renderModel(ShadowMapshader, ModelList);
+        //renderModel(ShadowMapshader, ModelList);
 
         // 4. render skybox as last
         // ----------------------
