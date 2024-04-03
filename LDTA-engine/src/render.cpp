@@ -98,6 +98,13 @@ void renderModel(Shader& shader, vector <Model>& ModelList)
     ModelList[0].Draw(shader);
 
     model = glm::mat4(1.0f);
+    model = glm::translate(model, glm::vec3(-2.0f, 1.0f, -3.0f));
+    model = glm::scale(model, glm::vec3(0.5f));
+    shader.setMat4("model", model);
+    ModelList[0].Draw(shader);
+
+
+    model = glm::mat4(1.0f);
     model = glm::translate(model, glm::vec3(-4.0f, -0.5f, 1.0f));
     model = glm::rotate(model, glm::radians(90.0f), glm::normalize(glm::vec3(0.0, 1.0, 0.0)));
     model = glm::scale(model, glm::vec3(0.15f));
@@ -186,6 +193,13 @@ void renderModel(Shader& shader, vector <Model>& ModelList)
     model = glm::mat4(1.0f);
     model = glm::translate(model, glm::vec3(-1.75f, 0.5f, 1.0f));
     model = glm::rotate(model, glm::radians((float)glfwGetTime() * 50.0f), glm::normalize(glm::vec3(0.0, 1.0, 0.0)));
+    model = glm::scale(model, glm::vec3(0.15f));
+    shader.setMat4("model", model);
+    ModelList[6].Draw(shader);
+
+    model = glm::mat4(1.0f);
+    model = glm::translate(model, glm::vec3(-1.0f, 0.5f, -0.75f));
+    model = glm::rotate(model, glm::radians(-(float)glfwGetTime() * 50.0f), glm::normalize(glm::vec3(0.0, 1.0, 0.0)));
     model = glm::scale(model, glm::vec3(0.15f));
     shader.setMat4("model", model);
     ModelList[6].Draw(shader);

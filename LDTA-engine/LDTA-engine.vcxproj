@@ -144,8 +144,6 @@
     <ClInclude Include="src\texture.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="resources\shaders\cubemaps.fs" />
-    <None Include="resources\shaders\cubemaps.vs" />
     <None Include="resources\shaders\debug_quad.vs" />
     <None Include="resources\shaders\debug_quad_depth.fs" />
     <None Include="resources\shaders\model_loading.fs" />

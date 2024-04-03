@@ -49,12 +49,6 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="resources\shaders\cubemaps.fs">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="resources\shaders\cubemaps.vs">
-      <Filter>Resource Files</Filter>
-    </None>
     <None Include="resources\shaders\debug_quad.vs">
       <Filter>Resource Files</Filter>
     </None>

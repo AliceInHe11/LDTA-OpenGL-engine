@@ -209,12 +209,13 @@ int main()
     ShadowMapShader.use();
     ShadowMapShader.setInt("diffuseTexture", 0);
     ShadowMapShader.setInt("shadowMap", 1);
+
     debugDepthQuad.use();
     debugDepthQuad.setInt("depthMap", 0);
+
     normalmapShader.use();
     normalmapShader.setInt("diffuseMap", 0);
     normalmapShader.setInt("normalMap", 1);
-
     // lighting info
     // -------------
     glm::vec3 lightPos(3.0f, 10.0f, 3.0f);
@@ -280,6 +281,7 @@ int main()
         normalmapShader.use();
         normalmapShader.setMat4("projection", projection);
         normalmapShader.setMat4("view", view);
+
         normalmapShader.setVec3("viewPos", camera.Position);
         normalmapShader.setVec3("lightPos", lightPos);
         renderModel(normalmapShader, ModelList);
