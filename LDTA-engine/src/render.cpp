@@ -222,6 +222,13 @@ void renderModel(Shader& shader, vector <Model>& ModelList)
     model = glm::scale(model, glm::vec3(0.002f));
     shader.setMat4("model", model);
     ModelList[8].Draw(shader);
+
+    model = glm::mat4(1.0f);
+    model = glm::translate(model, glm::vec3(4.0f, -0.85f, 4.0f));
+    model = glm::scale(model, glm::vec3(0.5f));
+    shader.setMat4("model", model);
+    ModelList[9].Draw(shader);
+
 }
 
 // renderCube() renders a 1x1 3D cube in NDC.

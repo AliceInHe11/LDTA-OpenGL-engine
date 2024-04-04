@@ -26,7 +26,7 @@ void main()
     vec3 color = texture(diffuseMap, fs_in.TexCoords).rgb;
     vec3 lightColor = vec3(0.5f, 0.5f, 0.5f);
     // ambient
-    vec3 ambient = 0.7 * lightColor;
+    vec3 ambient = 1.0 * lightColor;
     // diffuse
     vec3 lightDir = normalize(fs_in.TangentLightPos - fs_in.TangentFragPos);
     float diff = max(dot(lightDir, normal), 0.0);
@@ -38,5 +38,5 @@ void main()
     float spec = pow(max(dot(normal, halfwayDir), 0.0), 64.0);
 
     vec3 specular =  2.5 * spec * lightColor;
-    FragColor = vec4((ambient + 1.0 *(diffuse + specular))* color, 1.0);
+    FragColor = vec4((ambient + diffuse + specular)* color, 1.0);
 }
