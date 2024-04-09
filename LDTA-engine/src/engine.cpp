@@ -22,10 +22,12 @@ int main()
 
     GLFWwindow* window = NULL;
     if (FULL_SCREEN == 1)
-        window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "LDTA OPENGL-ENGINE", glfwGetPrimaryMonitor(), NULL); // full screen?
+        window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "LDTA OPENGL-ENGINE", glfwGetPrimaryMonitor(), NULL); // full screen
     else
-    if (FULL_SCREEN == 0)
+    if (FULL_SCREEN == 0) {
         window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "LDTA OPENGL-ENGINE", NULL, NULL); // window screen
+        glfwSetWindowPos(window,300,200);
+    }
     if (window == NULL)
     {
         std::cout << "Failed to create GLFW window" << std::endl;
@@ -79,6 +81,7 @@ int main()
     ModelList.push_back(Model("resources/objects/nanosuit/nanosuit.obj"));
     ModelList.push_back(Model("resources/objects/sponza/sponza.obj"));
     ModelList.push_back(Model("resources/objects/woodentower/woodentower.obj"));
+    ModelList.push_back(Model("resources/objects/container/container.obj"));
 
 
     // load textures

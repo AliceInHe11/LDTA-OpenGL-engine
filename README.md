@@ -8,7 +8,8 @@ A: Left
 D: Right
 SPACE: Up
 LEFT CTRL: Down
-LEFT SHIFT: Speed Up
+C: Speed Up
+LEFT SHIFT: Slow down
 MOUSE SCROLL: Zoom
 ESC: Exit
 
