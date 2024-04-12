@@ -9,7 +9,6 @@
 #include <camera.h>
 #include <model.h>
 #include <shader.h>
-
 #include <iostream>
 #include <vector>
 #include <iostream>
@@ -46,3 +45,5 @@ void readVideoConfig(const std::string& filename, unsigned int& shadowRange, uns
         cout << "CAN NOT OPEN CONFIG FILE - USING DEFAULT CONFIG.";
     }
 }
+
+

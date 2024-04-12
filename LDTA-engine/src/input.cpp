@@ -145,3 +145,84 @@ void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 {
     camera.ProcessMouseScroll(static_cast<float>(yoffset));
 }
+
+void changeLightPos(GLFWwindow* window, glm::vec3& lightPos) {
+    if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
+        if (lightPos.y >= 20.0f)
+            lightPos.y = 20.0f;
+        else
+            lightPos.y += 0.25f;
+
+    if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
+        if (lightPos.y <= -0.5f)
+            lightPos.y = -0.5f;
+        else
+            lightPos.y -= 0.25f;
+
+    if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
+        if (lightPos.x >= 20.0f)
+            lightPos.x = 20.0f;
+        else
+            lightPos.x += 0.25f;
+
+    if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
+        if (lightPos.x <= -20.0f)
+            lightPos.x = -20.0f;
+        else
+            lightPos.x -= 0.25f;
+}
+
+void changeLightInfo(GLFWwindow* window, glm::vec3& lightColor, float& ambientIntensity) {
+    if (glfwGetKey(window, GLFW_KEY_RIGHT_SHIFT) == GLFW_PRESS)
+    {
+        if (glfwGetKey(window, GLFW_KEY_R) == GLFW_PRESS)
+            if (lightColor.x <= 0.0f)
+                lightColor.x = 0.0f;
+            else
+                lightColor.x -= 0.001f;
+
+        if (glfwGetKey(window, GLFW_KEY_G) == GLFW_PRESS)
+            if (lightColor.y <= 0.0f)
+                lightColor.y = 0.0f;
+            else
+                lightColor.y -= 0.001f;
+
+        if (glfwGetKey(window, GLFW_KEY_B) == GLFW_PRESS)
+            if (lightColor.z <= 0.0f)
+                lightColor.z = 0.0f;
+            else
+                lightColor.z -= 0.001f;
+
+        if (glfwGetKey(window, GLFW_KEY_P) == GLFW_PRESS)
+            if (ambientIntensity <= 0.0f)
+                ambientIntensity = 0.0f;
+            else
+                ambientIntensity -= 0.025f;
+    }
+    else
+    {
+        if (glfwGetKey(window, GLFW_KEY_R) == GLFW_PRESS)
+            if (lightColor.x >= 1.0f)
+                lightColor.x = 1.0f;
+            else
+                lightColor.x += 0.001f;
+
+        if (glfwGetKey(window, GLFW_KEY_G) == GLFW_PRESS)
+            if (lightColor.y >= 1.0f)
+                lightColor.y = 1.0f;
+            else
+                lightColor.y += 0.001f;
+
+        if (glfwGetKey(window, GLFW_KEY_B) == GLFW_PRESS)
+            if (lightColor.z >= 1.0f)
+                lightColor.z = 1.0f;
+            else
+                lightColor.z += 0.001f;
+
+        if (glfwGetKey(window, GLFW_KEY_P) == GLFW_PRESS)
+            if (ambientIntensity >= 10.0f)
+                ambientIntensity = 10.0f;
+            else
+                ambientIntensity += 0.025f;
+    }
+}

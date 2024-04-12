@@ -1,4 +1,4 @@
-#version 330 core
+#version 460 core
 out vec4 FragColor;
 
 in VS_OUT {
@@ -14,6 +14,8 @@ uniform sampler2D normalMap;
 
 uniform vec3 lightPos;
 uniform vec3 viewPos;
+uniform vec3 lightColor;
+uniform float ambientIntensity;
 
 void main()
 {           
@@ -23,9 +25,9 @@ void main()
     normal = normalize(normal * 2.0 - 1.0);  // this normal is in tangent spac
     // get diffuse color
     vec3 color = texture(diffuseMap, fs_in.TexCoords).rgb;
-    vec3 lightColor = vec3(0.5f, 0.5f, 0.5f);
+    //vec3 lightColor = vec3(0.5f, 0.5f, 0.5f);
     // ambient
-    vec3 ambient = 1.0 * lightColor;
+    vec3 ambient = ambientIntensity * lightColor;
     // diffuse
     vec3 lightDir = normalize(fs_in.TangentLightPos - fs_in.TangentFragPos);
     float diff = max(dot(lightDir, normal), 0.0);

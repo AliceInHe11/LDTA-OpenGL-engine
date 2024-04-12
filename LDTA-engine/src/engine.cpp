@@ -50,6 +50,8 @@ int main()
         return -1;
     }
 
+    // configure video 
+     // --------------
     unsigned int SHADOW_WIDTH = 4096, SHADOW_HEIGHT = 4096, SHADOW_RANGE = 20;
     readVideoConfig("config/videoconfig.txt", SHADOW_RANGE, SHADOW_WIDTH, SHADOW_HEIGHT);
 
@@ -59,11 +61,11 @@ int main()
 
     // build and compile shaders
     // -------------------------
-    Shader ShadowMapShader("resources/shaders/shadow_mapping.vs", "resources/shaders/shadow_mapping.fs");
+    Shader shadowMapShader("resources/shaders/shadow_mapping.vs", "resources/shaders/shadow_mapping.fs");
     Shader simpleDepthShader("resources/shaders/shadow_mapping_depth.vs", "resources/shaders/shadow_mapping_depth.fs");
     Shader debugDepthQuad("resources/shaders/debug_quad.vs", "resources/shaders/debug_quad_depth.fs");
     Shader skyboxShader("resources/shaders/skybox.vs", "resources/shaders/skybox.fs");
-    Shader normalmapShader("resources/shaders/normal_mapping.vs", "resources/shaders/normal_mapping.fs");
+    Shader normalMapShader("resources/shaders/normal_mapping.vs", "resources/shaders/normal_mapping.fs");
 
     // load models
    // -----------
@@ -82,7 +84,6 @@ int main()
     ModelList.push_back(Model("resources/objects/sponza/sponza.obj"));
     ModelList.push_back(Model("resources/objects/woodentower/woodentower.obj"));
     ModelList.push_back(Model("resources/objects/container/container.obj"));
-
 
     // load textures
     // -------------
@@ -211,24 +212,26 @@ int main()
 
     // shader configuration
     // --------------------
-    ShadowMapShader.use();
-    ShadowMapShader.setInt("diffuseTexture", 0);
-    ShadowMapShader.setInt("shadowMap", 1);
+    shadowMapShader.use();
+    shadowMapShader.setInt("diffuseTexture", 0);
+    shadowMapShader.setInt("shadowMap", 1);
 
     debugDepthQuad.use();
     debugDepthQuad.setInt("depthMap", 0);
 
-    normalmapShader.use();
-    normalmapShader.setInt("diffuseMap", 0);
-    normalmapShader.setInt("normalMap", 1);
+    normalMapShader.use();
+    normalMapShader.setInt("diffuseMap", 0);
+    normalMapShader.setInt("normalMap", 1);
 
     skyboxShader.use();
     skyboxShader.setInt("skybox", 0);
     // lighting info
     // -------------
     glm::vec3 lightPos(3.0f, 10.0f, 3.0f);
+    float ambientIntensity = 0.75f;
+    glm::vec3 lightColor(0.75f, 0.75f, 0.75f);
 
-    cout << "Em Oi Lau Dai Tinh Ai Doooooooo.........!!!!!!!!!!";
+    cout << "AMBATUKAM!!!!!!!!!!!!";
 
     // render loop
     // -----------
@@ -248,7 +251,9 @@ int main()
         lightPos.x = sin(glfwGetTime()) * 5.5f;
         lightPos.z = cos(glfwGetTime()) * 5.5f;
         //lightPos.y = 5.0 + cos(glfwGetTime()) * 1.0f ;
-
+        changeLightPos(window, lightPos);
+        changeLightInfo(window, lightColor, ambientIntensity);
+  
         // render
         // ------
         glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
@@ -270,8 +275,6 @@ int main()
         glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
         glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
         glClear(GL_DEPTH_BUFFER_BIT);
-        //glActiveTexture(GL_TEXTURE0);
-        //glBindTexture(GL_TEXTURE_2D, dirtTexture);
         renderScene(simpleDepthShader, Texture);
         renderModel(simpleDepthShader, ModelList);
 
@@ -280,42 +283,34 @@ int main()
         // reset viewport
         glViewport(0, 0, SCR_WIDTH, SCR_HEIGHT);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
         glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
         glm::mat4 view = camera.GetViewMatrix();
 
         // 2. render model normal-mapped   
         // -----------------------------
-        normalmapShader.use();
-        normalmapShader.setMat4("projection", projection);
-        normalmapShader.setMat4("view", view);
-
-        normalmapShader.setVec3("viewPos", camera.Position);
-        normalmapShader.setVec3("lightPos", lightPos);
-        renderModel(normalmapShader, ModelList);
-        //renderScene(normalmapShader, Texture);
-        // render light source (simply re-renders a smaller plane at the light's position for debugging/visualization)
-        /*glm::mat4 model = glm::mat4(1.0f);
-        model = glm::translate(model, lightPos);
-        model = glm::scale(model, glm::vec3(0.1f));
-        normalmapShader.setMat4("model", model);*/
+        normalMapShader.use();
+        normalMapShader.setMat4("projection", projection);
+        normalMapShader.setMat4("view", view);
+        normalMapShader.setFloat("ambientIntensity", ambientIntensity);
+        normalMapShader.setVec3("viewPos", camera.Position);
+        normalMapShader.setVec3("lightPos", lightPos);
+        normalMapShader.setVec3("lightColor", lightColor);
+        renderModel(normalMapShader, ModelList);
 
         // 3. render scene as normal using the generated depth/shadow map  
         // --------------------------------------------------------------
-        ShadowMapShader.use();
-        ShadowMapShader.setMat4("projection", projection);
-        ShadowMapShader.setMat4("view", view);
-        // set light uniforms
-        ShadowMapShader.setVec3("viewPos", camera.Position);
-        ShadowMapShader.setVec3("lightPos", lightPos);
-        ShadowMapShader.setMat4("lightSpaceMatrix", lightSpaceMatrix);
-        /*glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, Texture[0]);*/
+        shadowMapShader.use();
+        shadowMapShader.setMat4("projection", projection);
+        shadowMapShader.setMat4("view", view);
+        shadowMapShader.setVec3("viewPos", camera.Position);
+        shadowMapShader.setFloat("ambientIntensity", ambientIntensity);
+        shadowMapShader.setVec3("lightPos", lightPos);
+        shadowMapShader.setVec3("lightColor", lightColor);
+        shadowMapShader.setMat4("lightSpaceMatrix", lightSpaceMatrix);
         glActiveTexture(GL_TEXTURE1);
         glBindTexture(GL_TEXTURE_2D, depthMap);
-        renderScene(ShadowMapShader, Texture);
-        //renderModel(ShadowMapShader, ModelList);
-
+        renderScene(shadowMapShader, Texture);
+       
         // 4. render skybox as last
         // ----------------------
         glDepthFunc(GL_LEQUAL);  // change depth function so depth test passes when values are equal to depth buffer's content
