@@ -1,7 +1,7 @@
 #include "engine.h"
 #include "render.cpp"
 #include "input.cpp"
-#include "texture.cpp"
+//#include "texture.cpp"
 
 int main()
 {
@@ -59,50 +59,14 @@ int main()
     // -----------------------------
     glEnable(GL_DEPTH_TEST);
 
-    // build and compile shaders
-    // -------------------------
-    Shader shadowMapShader("resources/shaders/shadow_mapping.vs", "resources/shaders/shadow_mapping.fs");
-    Shader simpleDepthShader("resources/shaders/shadow_mapping_depth.vs", "resources/shaders/shadow_mapping_depth.fs");
-    Shader debugDepthQuad("resources/shaders/debug_quad.vs", "resources/shaders/debug_quad_depth.fs");
-    Shader skyboxShader("resources/shaders/skybox.vs", "resources/shaders/skybox.fs");
-    Shader normalMapShader("resources/shaders/normal_mapping.vs", "resources/shaders/normal_mapping.fs");
-
-    // load models
-   // -----------
-    vector <Model> ModelList;
-    // tell stb_image.h to flip loaded texture's on the y-axis (before loading model).
-    stbi_set_flip_vertically_on_load(true);
-    ModelList.push_back(Model("resources/objects/backpack/backpack.obj"));
-    stbi_set_flip_vertically_on_load(false);
-    ModelList.push_back(Model("resources/objects/cottage/cottage.obj"));
-    ModelList.push_back(Model("resources/objects/birch_tree/birch_tree.obj"));
-    ModelList.push_back(Model("resources/objects/tree/tree.obj"));
-    ModelList.push_back(Model("resources/objects/rock/rock.obj"));
-    ModelList.push_back(Model("resources/objects/cyborg/cyborg.obj"));
-    ModelList.push_back(Model("resources/objects/planet/planet.obj"));
-    ModelList.push_back(Model("resources/objects/nanosuit/nanosuit.obj"));
-    ModelList.push_back(Model("resources/objects/sponza/sponza.obj"));
-    ModelList.push_back(Model("resources/objects/woodentower/woodentower.obj"));
-    ModelList.push_back(Model("resources/objects/container/container.obj"));
-
     // load textures
     // -------------
     vector <unsigned int> Texture;
-    Texture.push_back(loadTexture("resources/textures/dirt.bmp"));
-    Texture.push_back(loadTexture("resources/textures/dirt3.bmp"));
-    Texture.push_back(loadTexture("resources/textures/ambatukam.bmp"));
+    vector<string> faces;
+    vector <Shader> Shaderlist;
+    vector <Model> ModelList;
 
-    // load sky box textures
-    // ---------------------
-    vector<string> faces
-    {
-        "resources/textures/skybox/right.jpg",
-        "resources/textures/skybox/left.jpg",
-        "resources/textures/skybox/top.jpg",
-        "resources/textures/skybox/bottom.jpg",
-        "resources/textures/skybox/front.jpg",
-        "resources/textures/skybox/back.jpg"
-    };
+    engineResource(Shaderlist, ModelList, Texture, faces);
     unsigned int cubemapTexture = loadCubemap(faces);
 
     // set up vertex data (and buffer(s)) and configure vertex attributes
@@ -192,9 +156,9 @@ int main()
     unsigned int depthMapFBO;
     glGenFramebuffers(1, &depthMapFBO);
     // create depth texture
-    unsigned int depthMap;
-    glGenTextures(1, &depthMap);
-    glBindTexture(GL_TEXTURE_2D, depthMap);
+    unsigned int depthMaP;
+    glGenTextures(1, &depthMaP);
+    glBindTexture(GL_TEXTURE_2D, depthMaP);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, SHADOW_WIDTH, SHADOW_HEIGHT, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
@@ -204,7 +168,7 @@ int main()
     glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
     // attach depth texture as FBO's depth buffer
     glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthMap, 0);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthMaP, 0);
     glDrawBuffer(GL_NONE);
     glReadBuffer(GL_NONE);
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -212,19 +176,20 @@ int main()
 
     // shader configuration
     // --------------------
-    shadowMapShader.use();
-    shadowMapShader.setInt("diffuseTexture", 0);
-    shadowMapShader.setInt("shadowMap", 1);
+    Shaderlist[0].use();
+    Shaderlist[0].setInt("shadowMap", 1);
+    Shaderlist[0].setInt("diffuseTexture", 0);
 
-    debugDepthQuad.use();
-    debugDepthQuad.setInt("depthMap", 0);
+    Shaderlist[2].use();
+    Shaderlist[2].setInt("depthMap", 0);
 
-    normalMapShader.use();
-    normalMapShader.setInt("diffuseMap", 0);
-    normalMapShader.setInt("normalMap", 1);
+    Shaderlist[4].use();
+    Shaderlist[4].setInt("diffuseMap", 0);
+    Shaderlist[4].setInt("normalMap", 1);
+    Shaderlist[4].setInt("shadowMap", 1);
 
-    skyboxShader.use();
-    skyboxShader.setInt("skybox", 0);
+    Shaderlist[3].use();
+    Shaderlist[3].setInt("skybox", 0);
     // lighting info
     // -------------
     glm::vec3 lightPos(3.0f, 10.0f, 3.0f);
@@ -269,14 +234,14 @@ int main()
         lightView = glm::lookAt(lightPos, glm::vec3(0.0f), glm::vec3(0.0, 1.0, 0.0));
         lightSpaceMatrix = lightProjection * lightView;
         // render scene from light's point of view
-        simpleDepthShader.use();
-        simpleDepthShader.setMat4("lightSpaceMatrix", lightSpaceMatrix);
+        Shaderlist[1].use();
+        Shaderlist[1].setMat4("lightSpaceMatrix", lightSpaceMatrix);
 
         glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
         glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
         glClear(GL_DEPTH_BUFFER_BIT);
-        renderScene(simpleDepthShader, Texture);
-        renderModel(simpleDepthShader, ModelList);
+        renderScene(Shaderlist[1], Texture);
+        renderModel(Shaderlist[1], ModelList);
 
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
@@ -288,39 +253,42 @@ int main()
 
         // 2. render model normal-mapped   
         // -----------------------------
-        normalMapShader.use();
-        normalMapShader.setMat4("projection", projection);
-        normalMapShader.setMat4("view", view);
-        normalMapShader.setFloat("ambientIntensity", ambientIntensity);
-        normalMapShader.setVec3("viewPos", camera.Position);
-        normalMapShader.setVec3("lightPos", lightPos);
-        normalMapShader.setVec3("lightColor", lightColor);
-        renderModel(normalMapShader, ModelList);
+        Shaderlist[4].use();
+        Shaderlist[4].setMat4("projection", projection);
+        Shaderlist[4].setMat4("view", view);
+        Shaderlist[4].setFloat("ambientIntensity", ambientIntensity);
+        Shaderlist[4].setVec3("viewPos", camera.Position);
+        Shaderlist[4].setVec3("lightPos", lightPos);
+        Shaderlist[4].setVec3("lightColor", lightColor);
+        Shaderlist[4].setMat4("lightSpaceMatrix", lightSpaceMatrix);
+        glActiveTexture(GL_TEXTURE1);
+        glBindTexture(GL_TEXTURE_2D, depthMaP);
+        renderModel(Shaderlist[4], ModelList);
 
         // 3. render scene as normal using the generated depth/shadow map  
         // --------------------------------------------------------------
-        shadowMapShader.use();
-        shadowMapShader.setMat4("projection", projection);
-        shadowMapShader.setMat4("view", view);
-        shadowMapShader.setVec3("viewPos", camera.Position);
-        shadowMapShader.setFloat("ambientIntensity", ambientIntensity);
-        shadowMapShader.setVec3("lightPos", lightPos);
-        shadowMapShader.setVec3("lightColor", lightColor);
-        shadowMapShader.setMat4("lightSpaceMatrix", lightSpaceMatrix);
+        Shaderlist[0].use();
+        Shaderlist[0].setMat4("projection", projection);
+        Shaderlist[0].setMat4("view", view);
+        Shaderlist[0].setVec3("viewPos", camera.Position);
+        Shaderlist[0].setFloat("ambientIntensity", ambientIntensity);
+        Shaderlist[0].setVec3("lightPos", lightPos);
+        Shaderlist[0].setVec3("lightColor", lightColor);
+        Shaderlist[0].setMat4("lightSpaceMatrix", lightSpaceMatrix);
         glActiveTexture(GL_TEXTURE1);
-        glBindTexture(GL_TEXTURE_2D, depthMap);
-        renderScene(shadowMapShader, Texture);
-       
+        glBindTexture(GL_TEXTURE_2D, depthMaP);
+        renderScene(Shaderlist[0], Texture);
+
         // 4. render skybox as last
         // ----------------------
         glDepthFunc(GL_LEQUAL);  // change depth function so depth test passes when values are equal to depth buffer's content
-        skyboxShader.use();
+        Shaderlist[3].use();
         view = glm::mat4(glm::mat3(camera.GetViewMatrix())); // remove translation from the view matrix
-        skyboxShader.setMat4("view", view);
-        skyboxShader.setMat4("projection", projection);
+        Shaderlist[3].setMat4("view", view);
+        Shaderlist[3].setMat4("projection", projection);
         // skybox cube
         glBindVertexArray(skyboxVAO);
-        glActiveTexture(GL_TEXTURE0);
+        glActiveTexture(GL_TEXTURE1);
         glBindTexture(GL_TEXTURE_CUBE_MAP, cubemapTexture);
         glDrawArrays(GL_TRIANGLES, 0, 36);
         glBindVertexArray(0);
@@ -328,11 +296,11 @@ int main()
 
         // render Depth map to quad for visual debugging
         // ---------------------------------------------
-        /*debugDepthQuad.use();
-        debugDepthQuad.setFloat("near_plane", near_plane);
-        debugDepthQuad.setFloat("far_plane", far_plane);
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, depthMap)*/;
+        //debugDepthQuad.use();
+        //debugDepthQuad.setFloat("near_plane", near_plane);
+        //debugDepthQuad.setFloat("far_plane", far_plane);
+        //glActiveTexture(GL_TEXTURE0);
+        //glBindTexture(GL_TEXTURE_2D, depthMaP);
         //renderQuad();
 
         // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)

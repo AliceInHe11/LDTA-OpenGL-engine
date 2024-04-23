@@ -242,6 +242,7 @@ void renderModel(Shader& shader, vector <Model>& ModelList)
     shader.setMat4("model", model);
     ModelList[10].Draw(shader);
 
+
 }
 
 // renderCube() renders a 1x1 3D cube in NDC.
