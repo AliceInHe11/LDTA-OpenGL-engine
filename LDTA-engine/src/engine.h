@@ -4,11 +4,11 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
-//#include <stb_image.h>
 
 #include <camera.h>
 #include <model.h>
 #include <shader.h>
+
 #include <iostream>
 #include <vector>
 #include <iostream>
@@ -17,6 +17,9 @@
 #include <string>
 
 #include "texture.cpp"
+#include "render.cpp"
+#include "input.cpp"
+
 void readVideoConfig(const std::string& filename, unsigned int& shadowRange, unsigned int& shadowWidth, unsigned int& shadowHeight) {
     std::ifstream file(filename);
     if (file.is_open()) {
@@ -50,7 +53,7 @@ void readVideoConfig(const std::string& filename, unsigned int& shadowRange, uns
 void engineResource(vector <Shader>& Shaderlist, vector <Model>& ModelList, vector <unsigned int>& Texture, vector<string>& faces )
 {
     // build and compile shaders
-// -------------------------
+    // -------------------------
     Shaderlist.push_back(Shader("resources/shaders/shadow_mapping.vs", "resources/shaders/shadow_mapping.fs"));
     Shaderlist.push_back(Shader("resources/shaders/shadow_mapping_depth.vs", "resources/shaders/shadow_mapping_depth.fs"));
     Shaderlist.push_back(Shader("resources/shaders/debug_quad.vs", "resources/shaders/debug_quad_depth.fs"));
@@ -79,6 +82,8 @@ void engineResource(vector <Shader>& Shaderlist, vector <Model>& ModelList, vect
     Texture.push_back(loadTexture("resources/textures/dirt.bmp"));
     Texture.push_back(loadTexture("resources/textures/dirt3.bmp"));
     Texture.push_back(loadTexture("resources/textures/ambatukam.bmp"));
+    Texture.push_back(loadTexture("resources/textures/metal.bmp"));
+    Texture.push_back(loadTexture("resources/textures/fat.bmp"));
 
     // load sky box textures
     // ---------------------

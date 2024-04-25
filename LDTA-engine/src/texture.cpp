@@ -3,7 +3,7 @@
 // ----------------------
 unsigned int loadTexture(char const* path)
 {
-    unsigned int textureID;
+    unsigned int textureID=0;
     glGenTextures(1, &textureID);
 
     int width, height, nrComponents;
@@ -42,7 +42,7 @@ unsigned int loadTexture(char const* path)
 // -------------------------------
 unsigned int loadCubemap(vector<std::string> faces)
 {
-    unsigned int textureID;
+    unsigned int textureID=0;
     glGenTextures(1, &textureID);
     glBindTexture(GL_TEXTURE_CUBE_MAP, textureID);
 
