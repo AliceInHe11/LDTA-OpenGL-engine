@@ -54,6 +54,7 @@ void engineResource(vector <Shader>& Shaderlist, vector <Model>& ModelList, vect
 {
     // build and compile shaders
     // -------------------------
+    cout << endl;
     Shaderlist.push_back(Shader("resources/shaders/shadow_mapping.vs", "resources/shaders/shadow_mapping.fs"));
     Shaderlist.push_back(Shader("resources/shaders/shadow_mapping_depth.vs", "resources/shaders/shadow_mapping_depth.fs"));
     Shaderlist.push_back(Shader("resources/shaders/debug_quad.vs", "resources/shaders/debug_quad_depth.fs"));
@@ -63,6 +64,7 @@ void engineResource(vector <Shader>& Shaderlist, vector <Model>& ModelList, vect
     // load models
     // ------------
     // tell stb_image.h to flip loaded texture's on the y-axis (before loading model).
+    cout << endl;
     stbi_set_flip_vertically_on_load(true);
     ModelList.push_back(Model("resources/objects/backpack/backpack.obj"));
     stbi_set_flip_vertically_on_load(false);
@@ -79,6 +81,7 @@ void engineResource(vector <Shader>& Shaderlist, vector <Model>& ModelList, vect
 
     // load textures
     // -------------
+    cout << endl;
     Texture.push_back(loadTexture("resources/textures/dirt.bmp"));
     Texture.push_back(loadTexture("resources/textures/dirt3.bmp"));
     Texture.push_back(loadTexture("resources/textures/ambatukam.bmp"));
@@ -87,6 +90,7 @@ void engineResource(vector <Shader>& Shaderlist, vector <Model>& ModelList, vect
 
     // load sky box textures
     // ---------------------
+    cout << endl;
     vector <string> get
     {
         "resources/textures/skybox/right.jpg",

@@ -94,7 +94,7 @@ public:
         glDeleteShader(fragment);
         if (geometryPath != nullptr)
             glDeleteShader(geometry);
-
+        std::cout << "Shader built and compiled successfully at path: " << vertexPath << std::endl << "\t\t\t\t\t\t" << fragmentPath << std::endl;
     }
     // activate the shader
     // ------------------------------------------------------------------------
@@ -163,7 +163,7 @@ public:
 
 private:
     // utility function for checking shader compilation/linking errors.
-    // ------------------------------------------------------------------------
+    // ----------------------------------------------------------------
     void checkCompileErrors(GLuint shader, std::string type)
     {
         GLint success;
