@@ -374,7 +374,7 @@ void renderModel(Shader& shader, vector <Model>& ModelList, unsigned int& depthM
 }
 
 // renderCube() renders a 1x1 3D cube in NDC.
-// -------------------------------------------------
+// ------------------------------------------
 void renderCube()
 {
     // initialize (if necessary)

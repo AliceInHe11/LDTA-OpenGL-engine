@@ -47,6 +47,9 @@
     <ClInclude Include="src\texture.cpp">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\GL\utility.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="resources\shaders\debug_quad.vs">

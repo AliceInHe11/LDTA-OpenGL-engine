@@ -27,12 +27,16 @@ unsigned int loadTexture(char const* path)
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
+        SET_COLOR(2);
         std::cout << "Texture succeed to load at path: " << path << std::endl;
+        SET_COLOR(7);
         stbi_image_free(data);
     }
     else
     {
+        SET_COLOR(4);
         std::cout << "Texture failed to load at path: " << path << std::endl;
+        SET_COLOR(7);
         stbi_image_free(data);
     }
 
@@ -55,11 +59,15 @@ unsigned int loadCubemap(vector<std::string> faces)
         {
             glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
             stbi_image_free(data);
+            SET_COLOR(2);
             std::cout << "Cubemap texture succeed to load at path: " << faces[i] << std::endl;
+            SET_COLOR(7);
         }
         else
         {
+            SET_COLOR(4);
             std::cout << "Cubemap texture failed to load at path: " << faces[i] << std::endl;
+            SET_COLOR(7);
             stbi_image_free(data);
         }
     }

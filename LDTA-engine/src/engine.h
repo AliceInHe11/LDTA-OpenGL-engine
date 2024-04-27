@@ -1,3 +1,11 @@
+#include <iostream>
+#include <vector> 
+#include <iostream>
+#include <fstream>
+#include <sstream>
+#include <string>
+#include <windows.h>
+
 #include <glad.h>
 #include <glfw3.h>
 
@@ -5,16 +13,10 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
+#include <utility.h>
 #include <camera.h>
 #include <model.h>
 #include <shader.h>
-
-#include <iostream>
-#include <vector>
-#include <iostream>
-#include <fstream>
-#include <sstream>
-#include <string>
 
 #include "texture.cpp"
 #include "render.cpp"

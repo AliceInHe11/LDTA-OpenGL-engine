@@ -104,7 +104,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>include\stb;include\glm;include\GLFW;include\glad;include\GL;include\assimp;include\KHR;include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>src;include\stb;include\glm;include\GLFW;include\glad;include\GL;include\assimp;include\KHR;include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -138,6 +138,7 @@
     <ClInclude Include="include\GL\mesh.h" />
     <ClInclude Include="include\GL\model.h" />
     <ClInclude Include="include\GL\shader.h" />
+    <ClInclude Include="include\GL\utility.h" />
     <ClInclude Include="src\engine.h" />
     <ClInclude Include="src\input.cpp" />
     <ClInclude Include="src\render.cpp" />

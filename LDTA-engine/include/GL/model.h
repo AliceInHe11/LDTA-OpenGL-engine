@@ -2,8 +2,6 @@
 #ifndef MODEL_H
 #define MODEL_H
 
-#define STB_IMAGE_IMPLEMENTATION
-
 #include <glad/glad.h> 
 
 #include <glm/glm.hpp>
@@ -73,7 +71,9 @@ private:
 
         // process ASSIMP's root node recursively
         processNode(scene->mRootNode, scene);
+        SET_COLOR(2);
         std::cout << "Model succeed to load at path: " << path << std::endl;
+        SET_COLOR(7);
     }
 
     // processes a node in a recursive fashion. Processes each individual mesh located at the node and repeats this process on its children nodes (if any).

@@ -1,3 +1,5 @@
+#define STB_IMAGE_IMPLEMENTATION
+
 #include "engine.h"
 
 int main()
@@ -7,7 +9,7 @@ int main()
     glfwInit();
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
-    glfwWindowHint(GLFW_SAMPLES, 16);
+    glfwWindowHint(GLFW_SAMPLES, 8);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
 #ifdef __APPLE__
@@ -20,10 +22,10 @@ int main()
 
     GLFWwindow* window = NULL;
     if (FULL_SCREEN == 1)
-        window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "LDTA OPENGL-ENGINE", glfwGetPrimaryMonitor(), NULL); // full screen
+        window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "LDTA - OPENGL ENGINE", glfwGetPrimaryMonitor(), NULL); // full screen
     else
     if (FULL_SCREEN == 0) {
-        window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "LDTA OPENGL-ENGINE", NULL, NULL); // window screen
+        window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "LDTA - OPENGL ENGINE", NULL, NULL); // window screen
         glfwSetWindowPos(window,300,200);
     }
     if (window == NULL)
@@ -47,6 +49,16 @@ int main()
         std::cout << "Failed to initialize GLAD" << std::endl;
         return -1;
     }
+    else
+    {
+        std::cout << "OpenGL functions succesfully loaded." << std::endl;
+        std::cout << "Version:" + std::string((char*)glGetString(GL_VERSION)) << " - (Major: " + std::to_string(GLVersion.major) + ", Minor: " + std::to_string(GLVersion.minor) << ")" << std::endl;
+        std::cout << "Driver: " + std::string((char*)glGetString(GL_VENDOR)) << std::endl;
+        std::cout << "Total System Memory (RAM): " << SystemMemoryInfo() << " MB" << endl;
+        std::cout << "Processor: " + GetCpuInfo() << std::endl;
+        std::cout << "Renderer: " + std::string((char*)glGetString(GL_RENDERER)) << std::endl;
+        std::cout << "Shading language: " + std::string((char*)glGetString(GL_SHADING_LANGUAGE_VERSION)) << std::endl;   
+    }
 
     // configure video 
     // ---------------
@@ -58,6 +70,8 @@ int main()
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_MULTISAMPLE);
 
+    // set up render data 
+    // ------------------
     vector <unsigned int> Texture;
     vector <string> faces;
     vector <Shader> Shaderlist;
@@ -125,6 +139,7 @@ int main()
         -1.0f, -1.0f,  1.0f,
          1.0f, -1.0f,  1.0f
     };
+
     // configure VAO 
     // -------------
     // plane VAO
@@ -200,6 +215,7 @@ int main()
     glm::mat4 *lightSpaceMatrix = new glm::mat4;
     glm::mat4 *projection = new glm::mat4;
     glm::mat4 *view = new glm::mat4;
+
     cout << "AMBATUKAM!!!!!!!!!!!!";
 
     // render loop
