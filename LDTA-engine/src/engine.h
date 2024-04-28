@@ -22,32 +22,62 @@
 #include "render.cpp"
 #include "input.cpp"
 
-void readVideoConfig(const std::string& filename, unsigned int& shadowRange, unsigned int& shadowWidth, unsigned int& shadowHeight) {
+struct ShadowInfo
+{
+    unsigned int SHADOW_WIDTH;
+    unsigned int SHADOW_HEIGHT;
+    unsigned int SHADOW_RANGE;
+};
+
+// lighting info
+// -------------
+glm::vec3 lightPos(3.0f, 10.0f, 3.0f);
+float ambientIntensity = 0.75f;
+glm::vec3 lightColor(0.75f, 0.75f, 0.75f);
+bool renderDepth;
+glm::mat4* lightProjection = new glm::mat4;
+glm::mat4* lightView = new glm::mat4;
+glm::mat4* lightSpaceMatrix = new glm::mat4;
+
+// camera info
+// -----------
+glm::mat4* projection = new glm::mat4;
+glm::mat4* view = new glm::mat4;
+
+// render info
+// -----------
+vector <unsigned int> Texture;
+vector <string> faces;
+vector <Shader> Shaderlist;
+vector <Model> ModelList;
+
+void readVideoConfig(const std::string& filename, ShadowInfo &value) {
     std::ifstream file(filename);
     if (file.is_open()) {
         std::string line;
         if (std::getline(file, line))
-            shadowRange = std::stoi(line);
+            value.SHADOW_RANGE = std::stoi(line);
         if (std::getline(file, line))
-            shadowWidth = std::stoi(line);
+            value.SHADOW_WIDTH = std::stoi(line);
         if (std::getline(file, line))
-            shadowHeight = std::stoi(line);
+            value.SHADOW_HEIGHT = std::stoi(line);
         file.close();
 
-        if (shadowRange < 0) {
+        if (value.SHADOW_RANGE < 0) {
             cout << "INVLID VALUE - RESTORE TO DEFAULT RANGE (20).";
-            shadowRange = 20;
+            value.SHADOW_RANGE = 20;
         }
-        if (shadowWidth < 0 || shadowHeight < 0) {
+        if (value.SHADOW_WIDTH < 0 || value.SHADOW_HEIGHT < 0) {
             cout << endl << "INVLID VALUE - RESTORE TO DEFAULT (2048)." << endl;
-            shadowWidth = 2048;
-            shadowHeight = 2048;
+            value.SHADOW_WIDTH = 2048;
+            value.SHADOW_HEIGHT = 2048;
         }
 
-        cout << "SHADOW RANGE: " << shadowRange;
-        cout << endl << "SHADOW MAP RESOLUTION: " << shadowWidth << "x" << shadowHeight << endl;
+        cout << "SHADOW RANGE: " << value.SHADOW_RANGE;
+        cout << endl << "SHADOW MAP RESOLUTION: " << value.SHADOW_WIDTH << "x" << value.SHADOW_HEIGHT << endl;
     }
-    else {
+    else 
+    {
         cout << "CAN NOT OPEN CONFIG FILE - USING DEFAULT CONFIG.";
     }
 }

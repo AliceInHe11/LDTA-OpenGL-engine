@@ -18,20 +18,23 @@ int main()
 
     // glfw window creation
     // --------------------
-    readWindowConfig("config/windowconfig.txt", FULL_SCREEN, SCR_WIDTH, SCR_HEIGHT);
+    readWindowConfig("config/windowconfig.txt", ScreenValue);
 
     GLFWwindow* window = NULL;
-    if (FULL_SCREEN == 1)
-        window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "LDTA - OPENGL ENGINE", glfwGetPrimaryMonitor(), NULL); // full screen
+    if (ScreenValue.SCREEN_MODE == 1)
+        window = glfwCreateWindow(ScreenValue.SCR_WIDTH, ScreenValue.SCR_HEIGHT, "LDTA - OPENGL ENGINE", glfwGetPrimaryMonitor(), NULL); // full screen
     else
-    if (FULL_SCREEN == 0) {
-        window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "LDTA - OPENGL ENGINE", NULL, NULL); // window screen
-        glfwSetWindowPos(window,300,200);
+    if (ScreenValue.SCREEN_MODE == 0)
+    {
+        window = glfwCreateWindow(ScreenValue.SCR_WIDTH, ScreenValue.SCR_HEIGHT, "LDTA - OPENGL ENGINE", NULL, NULL); // window screen
+        windowPosition(ScreenValue, WindowsPos);
+        glfwSetWindowPos(window, WindowsPos.WINDOWS_POS_X, WindowsPos.WINDOWS_POS_Y);
     }
     if (window == NULL)
     {
         std::cout << "Failed to create GLFW window" << std::endl;
         glfwTerminate();
+        system("pause");
         return -1;
     }
     glfwMakeContextCurrent(window);
@@ -47,23 +50,24 @@ int main()
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
     {
         std::cout << "Failed to initialize GLAD" << std::endl;
+        system("pause");
         return -1;
     }
     else
     {
         std::cout << "OpenGL functions succesfully loaded." << std::endl;
-        std::cout << "Version:" + std::string((char*)glGetString(GL_VERSION)) << " - (Major: " + std::to_string(GLVersion.major) + ", Minor: " + std::to_string(GLVersion.minor) << ")" << std::endl;
+        std::cout << "Version: " + std::string((char*)glGetString(GL_VERSION)) << " - (Major: " + std::to_string(GLVersion.major) + ", Minor: " + std::to_string(GLVersion.minor) << ")" << std::endl;
         std::cout << "Driver: " + std::string((char*)glGetString(GL_VENDOR)) << std::endl;
         std::cout << "Total System Memory (RAM): " << SystemMemoryInfo() << " MB" << endl;
         std::cout << "Processor: " + GetCpuInfo() << std::endl;
         std::cout << "Renderer: " + std::string((char*)glGetString(GL_RENDERER)) << std::endl;
-        std::cout << "Shading language: " + std::string((char*)glGetString(GL_SHADING_LANGUAGE_VERSION)) << std::endl;   
+        std::cout << "Shading language version: " + std::string((char*)glGetString(GL_SHADING_LANGUAGE_VERSION)) << std::endl;   
     }
 
     // configure video 
     // ---------------
-    unsigned int SHADOW_WIDTH = 4096, SHADOW_HEIGHT = 4096, SHADOW_RANGE = 20;
-    readVideoConfig("config/videoconfig.txt", SHADOW_RANGE, SHADOW_WIDTH, SHADOW_HEIGHT);
+    ShadowInfo value;
+    readVideoConfig("config/videoconfig.txt", value);
 
     // configure global opengl state
     // -----------------------------
@@ -72,11 +76,6 @@ int main()
 
     // set up render data 
     // ------------------
-    vector <unsigned int> Texture;
-    vector <string> faces;
-    vector <Shader> Shaderlist;
-    vector <Model> ModelList;
-
     engineResource(Shaderlist, ModelList, Texture, faces);
     unsigned int cubemapTexture = loadCubemap(faces);
 
@@ -174,7 +173,7 @@ int main()
     unsigned int depthMaP;
     glGenTextures(1, &depthMaP);
     glBindTexture(GL_TEXTURE_2D, depthMaP);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, SHADOW_WIDTH, SHADOW_HEIGHT, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, value.SHADOW_WIDTH, value.SHADOW_HEIGHT, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
@@ -204,17 +203,6 @@ int main()
 
     Shaderlist[3].use();
     Shaderlist[3].setInt("skybox", 0);
-    // lighting info
-    // -------------
-    glm::vec3 lightPos(3.0f, 10.0f, 3.0f);
-    float ambientIntensity = 0.75f;
-    glm::vec3 lightColor(0.75f, 0.75f, 0.75f);
-    bool renderDepth;
-    glm::mat4 *lightProjection = new glm::mat4;
-    glm::mat4 *lightView= new glm::mat4; 
-    glm::mat4 *lightSpaceMatrix = new glm::mat4;
-    glm::mat4 *projection = new glm::mat4;
-    glm::mat4 *view = new glm::mat4;
 
     cout << "AMBATUKAM!!!!!!!!!!!!";
 
@@ -248,14 +236,14 @@ int main()
         // --------------------------------------------------------------
         float near_plane = 0.15f, far_plane = 30.5f;
         //lightProjection = glm::perspective(glm::radians(45.0f), (GLfloat)SHADOW_WIDTH / (GLfloat)SHADOW_HEIGHT, near_plane, far_plane); // note that if you use a perspective projection matrix you'll have to change the light position as the current light position isn't enough to reflect the whole scene
-        *lightProjection = glm::ortho(-(float)SHADOW_RANGE, (float)SHADOW_RANGE, -(float)SHADOW_RANGE, (float)SHADOW_RANGE, near_plane, far_plane);
+        *lightProjection = glm::ortho(-(float)value.SHADOW_RANGE, (float)value.SHADOW_RANGE, -(float)value.SHADOW_RANGE, (float)value.SHADOW_RANGE, near_plane, far_plane);
         *lightView = glm::lookAt(lightPos, glm::vec3(0.0f), glm::vec3(0.0, 1.0, 0.0));
         *lightSpaceMatrix = *lightProjection * *lightView;
         // render scene from light's point of view
         Shaderlist[1].use();
         Shaderlist[1].setMat4("lightSpaceMatrix", *lightSpaceMatrix);
 
-        glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
+        glViewport(0, 0, value.SHADOW_WIDTH, value.SHADOW_HEIGHT);
         glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
         glClear(GL_DEPTH_BUFFER_BIT);
         renderScene(Shaderlist[1], Texture, renderDepth = true);
@@ -263,9 +251,9 @@ int main()
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
         // reset viewport
-        glViewport(0, 0, SCR_WIDTH, SCR_HEIGHT);
+        glViewport(0, 0, ScreenValue.SCR_WIDTH, ScreenValue.SCR_HEIGHT);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        *projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
+        *projection = glm::perspective(glm::radians(camera.Zoom), (float)ScreenValue.SCR_WIDTH / (float)ScreenValue.SCR_HEIGHT, 0.1f, 100.0f);
         *view = camera.GetViewMatrix();
 
         // 2. render model normal-mapped   
@@ -335,6 +323,8 @@ int main()
     delete lightProjection, lightSpaceMatrix, lightView, projection, view;
 
     glfwTerminate();
+
+    system("pause");
     return 0;
 }
 

@@ -1,51 +1,71 @@
+struct ScreenInfo 
+{
+    // settings window mode (1 - fullscren, 0 - window screen)
+    unsigned int SCREEN_MODE = 0;
+    // settings resolution
+    unsigned int SCR_WIDTH = 800;
+    unsigned int SCR_HEIGHT = 600;
+};
+ScreenInfo ScreenValue;
 
-// settings window mode (1 - fullscren, 0 - window screen)
-unsigned int FULL_SCREEN = 0;
-
-// settings resolution
-unsigned int SCR_WIDTH = 800;
-unsigned int SCR_HEIGHT = 600;
+struct WindowsPosition
+{
+    unsigned int WINDOWS_POS_X;
+    unsigned int WINDOWS_POS_Y;
+};
+WindowsPosition WindowsPos;
 
 // camera
 Camera camera(glm::vec3(-3.0f, 3.0f, 3.0f));
-float lastX = (float)SCR_WIDTH / 2.0;
-float lastY = (float)SCR_HEIGHT / 2.0;
+float lastX = (float)ScreenValue.SCR_WIDTH / 2.0;
+float lastY = (float)ScreenValue.SCR_HEIGHT / 2.0;
 bool firstMouse = true;
 
 // timing
 float deltaTime = 0.0f;
 float lastFrame = 0.0f;
 
+void windowPosition(ScreenInfo ScreenValue, WindowsPosition &WindowsPos) {
+    const GLFWvidmode* mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
+
+    if (mode->width >= ScreenValue.SCR_WIDTH && mode->height >= ScreenValue.SCR_HEIGHT) {
+        WindowsPos.WINDOWS_POS_X = mode->width / 2 - ScreenValue.SCR_WIDTH / 2;
+        WindowsPos.WINDOWS_POS_Y = mode->height / 2 - ScreenValue.SCR_HEIGHT / 2;
+    }
+    else
+        return;
+}
+
 // config a window mode and resolution
 // -----------------------------------
-void readWindowConfig(const std::string& filename, unsigned int& screenMode, unsigned int& screenWidth, unsigned int& screenHeight) {
+void readWindowConfig(const std::string& filename, ScreenInfo &ScreenValue) {
     std::ifstream file(filename);
     if (file.is_open()) {
         std::string line;
         if (std::getline(file, line))
-            screenMode = std::stoi(line);
+            ScreenValue.SCREEN_MODE = std::stoi(line);
         if (std::getline(file, line))
-            screenWidth = std::stoi(line);
+            ScreenValue.SCR_WIDTH = std::stoi(line);
         if (std::getline(file, line))
-            screenHeight = std::stoi(line);
+            ScreenValue.SCR_HEIGHT = std::stoi(line);
         file.close();
 
-        if (screenWidth <= 0 || screenHeight <= 0) {
+        if (ScreenValue.SCR_WIDTH <= 0 || ScreenValue.SCR_HEIGHT <= 0) {
             cout << "INVLID RESOLUTION VALUE - RESTORE TO DEFAULT RESOLUTION (800x600).";
-            screenWidth = 800;
-            screenHeight = 600;
+            ScreenValue.SCR_WIDTH = 800;
+            ScreenValue.SCR_HEIGHT = 600;
         }
-        if (screenMode < 0 || screenMode > 1) {
+        if (ScreenValue.SCREEN_MODE < 0 || ScreenValue.SCREEN_MODE > 1) {
             cout << endl << "INVLID WINDOW MODE VALUE - RESTORE TO DEFAULT WINDOW MODE (WINDOWSCREEN).";
-            screenMode = 0;
+            ScreenValue.SCREEN_MODE = 0;
         }
 
         cout << "Window Mode: ";
-        if (screenMode == 1)
+        if (ScreenValue.SCREEN_MODE == 1)
             cout << "FULLSCREEN";
         else
             cout << "WINDOWSCREN";
-        cout << endl << "Resolution: " << screenWidth << "x" << screenHeight << endl;
+        cout << endl << "Resolution: " << ScreenValue.SCR_WIDTH << "x" << ScreenValue.SCR_HEIGHT << endl;
 
     }
     else {

@@ -5,8 +5,27 @@
 #include <intrin.h> 
 #include <array>
 
+//    COLOR CODE	       COLOR
+//      0	                BLACK
+//      1	                BLUE
+//      2	                GREEN
+//      3	                AQUA
+//      4	                RED
+//      5	                PURPLE
+//      6	                YELLOW
+//      7	                WHITE
+//      8	                GRAY
+//      9	                LIGHT BLUE
+//      10(A)               LIGHT GREEN
+//      11(B)               LIGHT AQUA
+//      12(C)               LIGHT RED
+//      13(D)               LIGHT PURPLE
+//      14(E)               LIGHT YELLOW
+//      15(F)               BRIGHT WHITE
+
 void SET_COLOR(int color)
 {
+    if (color < 0 || color > 15) return;
     WORD wColor;
 
     HANDLE hStdOut = GetStdHandle(STD_OUTPUT_HANDLE);
