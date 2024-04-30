@@ -135,6 +135,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\GL\camera.h" />
+    <ClInclude Include="include\GL\image.h" />
     <ClInclude Include="include\GL\mesh.h" />
     <ClInclude Include="include\GL\model.h" />
     <ClInclude Include="include\GL\shader.h" />

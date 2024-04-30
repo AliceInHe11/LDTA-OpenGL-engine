@@ -13,6 +13,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
+#include <image.h>
 #include <utility.h>
 #include <camera.h>
 #include <model.h>
@@ -27,6 +28,73 @@ struct ShadowInfo
     unsigned int SHADOW_WIDTH;
     unsigned int SHADOW_HEIGHT;
     unsigned int SHADOW_RANGE;
+};
+
+struct EngineInfo
+{
+    int MAJOR_VERSION;
+    int MINOR_VERSION;
+    int SAMPLES_VALUE;
+};
+
+// set up vertex data (and buffer(s)) and configure vertex attributes
+   // ------------------------------------------------------------------
+float planeVertices[] = {
+    // positions           // normals         // texcoords
+    25.0f, -0.5f,  25.0f,  0.0f, 1.0f, 0.0f,  50.0f,  0.0f,
+   -25.0f, -0.5f,  25.0f,  0.0f, 1.0f, 0.0f,   0.0f,  0.0f,
+   -25.0f, -0.5f, -25.0f,  0.0f, 1.0f, 0.0f,   0.0f, 50.0f,
+
+    25.0f, -0.5f,  25.0f,  0.0f, 1.0f, 0.0f,  50.0f,  0.0f,
+   -25.0f, -0.5f, -25.0f,  0.0f, 1.0f, 0.0f,   0.0f, 50.0f,
+    25.0f, -0.5f, -25.0f,  0.0f, 1.0f, 0.0f,  50.0f, 50.0f
+};
+
+// set up sky vertex data 
+// ----------------------
+float skyboxVertices[] = {
+    // positions          
+    -1.0f,  1.0f, -1.0f,
+    -1.0f, -1.0f, -1.0f,
+     1.0f, -1.0f, -1.0f,
+     1.0f, -1.0f, -1.0f,
+     1.0f,  1.0f, -1.0f,
+    -1.0f,  1.0f, -1.0f,
+
+    -1.0f, -1.0f,  1.0f,
+    -1.0f, -1.0f, -1.0f,
+    -1.0f,  1.0f, -1.0f,
+    -1.0f,  1.0f, -1.0f,
+    -1.0f,  1.0f,  1.0f,
+    -1.0f, -1.0f,  1.0f,
+
+     1.0f, -1.0f, -1.0f,
+     1.0f, -1.0f,  1.0f,
+     1.0f,  1.0f,  1.0f,
+     1.0f,  1.0f,  1.0f,
+     1.0f,  1.0f, -1.0f,
+     1.0f, -1.0f, -1.0f,
+
+    -1.0f, -1.0f,  1.0f,
+    -1.0f,  1.0f,  1.0f,
+     1.0f,  1.0f,  1.0f,
+     1.0f,  1.0f,  1.0f,
+     1.0f, -1.0f,  1.0f,
+    -1.0f, -1.0f,  1.0f,
+
+    -1.0f,  1.0f, -1.0f,
+     1.0f,  1.0f, -1.0f,
+     1.0f,  1.0f,  1.0f,
+     1.0f,  1.0f,  1.0f,
+    -1.0f,  1.0f,  1.0f,
+    -1.0f,  1.0f, -1.0f,
+
+    -1.0f, -1.0f, -1.0f,
+    -1.0f, -1.0f,  1.0f,
+     1.0f, -1.0f, -1.0f,
+     1.0f, -1.0f, -1.0f,
+    -1.0f, -1.0f,  1.0f,
+     1.0f, -1.0f,  1.0f
 };
 
 // lighting info
@@ -51,9 +119,43 @@ vector <string> faces;
 vector <Shader> Shaderlist;
 vector <Model> ModelList;
 
+void readEnginConfig(const std::string& filename, EngineInfo& value) {
+    std::ifstream file(filename);
+
+    if (file.is_open()) 
+    {
+        std::string line;
+        if (std::getline(file, line))
+            value.MAJOR_VERSION = std::stoi(line);
+        if (std::getline(file, line))
+            value.MINOR_VERSION = std::stoi(line);
+        if (std::getline(file, line))
+            value.SAMPLES_VALUE = std::stoi(line);
+        file.close();
+
+        if (value.MAJOR_VERSION < 3 || value.MAJOR_VERSION > 4) 
+            value.MAJOR_VERSION = 3;
+        
+        if (value.MINOR_VERSION < 3 || value.MINOR_VERSION > 6) 
+            value.MINOR_VERSION = 3;
+
+        if (value.SAMPLES_VALUE < 0 || value.SAMPLES_VALUE > 16)
+            value.SAMPLES_VALUE = 4;
+        
+    }
+    else
+    {
+        cout << "CAN NOT OPEN CONFIG FILE - USING DEFAULT CONFIG.";
+        value.MAJOR_VERSION = 3;
+        value.MINOR_VERSION = 3;
+        value.SAMPLES_VALUE = 4;
+    }
+}
+
 void readVideoConfig(const std::string& filename, ShadowInfo &value) {
     std::ifstream file(filename);
-    if (file.is_open()) {
+    if (file.is_open()) 
+    {
         std::string line;
         if (std::getline(file, line))
             value.SHADOW_RANGE = std::stoi(line);
@@ -65,12 +167,12 @@ void readVideoConfig(const std::string& filename, ShadowInfo &value) {
 
         if (value.SHADOW_RANGE < 0) {
             cout << "INVLID VALUE - RESTORE TO DEFAULT RANGE (20).";
-            value.SHADOW_RANGE = 20;
+            value.SHADOW_RANGE = 10;
         }
         if (value.SHADOW_WIDTH < 0 || value.SHADOW_HEIGHT < 0) {
             cout << endl << "INVLID VALUE - RESTORE TO DEFAULT (2048)." << endl;
-            value.SHADOW_WIDTH = 2048;
-            value.SHADOW_HEIGHT = 2048;
+            value.SHADOW_WIDTH = 512;
+            value.SHADOW_HEIGHT = 512;
         }
 
         cout << "SHADOW RANGE: " << value.SHADOW_RANGE;
@@ -79,6 +181,9 @@ void readVideoConfig(const std::string& filename, ShadowInfo &value) {
     else 
     {
         cout << "CAN NOT OPEN CONFIG FILE - USING DEFAULT CONFIG.";
+        value.SHADOW_RANGE = 10;
+        value.SHADOW_WIDTH = 512;
+        value.SHADOW_HEIGHT = 512;
     }
 }
 
@@ -133,6 +238,5 @@ void engineResource(vector <Shader>& Shaderlist, vector <Model>& ModelList, vect
         "resources/textures/skybox/back.jpg"
     };
     faces = get;
-
 }
 

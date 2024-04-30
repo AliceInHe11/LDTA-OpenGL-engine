@@ -64,7 +64,7 @@ void readWindowConfig(const std::string& filename, ScreenInfo &ScreenValue) {
         if (ScreenValue.SCREEN_MODE == 1)
             cout << "FULLSCREEN";
         else
-            cout << "WINDOWSCREN";
+            cout << "WINDOWSCREEN";
         cout << endl << "Resolution: " << ScreenValue.SCR_WIDTH << "x" << ScreenValue.SCR_HEIGHT << endl;
 
     }

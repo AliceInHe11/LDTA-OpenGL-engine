@@ -1,4 +1,3 @@
-
 #ifndef MODEL_H
 #define MODEL_H
 
@@ -6,11 +5,11 @@
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
-#include <stb_image.h>
 #include <assimp/Importer.hpp>  
 #include <assimp/scene.h>       
 #include <assimp/postprocess.h> 
 
+#include <image.h>
 #include <mesh.h>
 #include <shader.h>
 
@@ -59,7 +58,7 @@ private:
     {
         // read file via ASSIMP
         Assimp::Importer importer;
-        const aiScene* scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_GenSmoothNormals | aiProcess_FlipUVs | aiProcess_CalcTangentSpace);
+        const aiScene* scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_OptimizeMeshes | aiProcess_GenSmoothNormals | aiProcess_FlipUVs | aiProcess_CalcTangentSpace);
         // check for errors
         if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) // if is Not Zero
         {
