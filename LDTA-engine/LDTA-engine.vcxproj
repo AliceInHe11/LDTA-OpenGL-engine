@@ -140,6 +140,7 @@
     <ClInclude Include="include\GL\model.h" />
     <ClInclude Include="include\GL\shader.h" />
     <ClInclude Include="include\GL\utility.h" />
+    <ClInclude Include="resource.h" />
     <ClInclude Include="src\engine.h" />
     <ClInclude Include="src\input.cpp" />
     <ClInclude Include="src\render.cpp" />
@@ -158,6 +159,13 @@
     <None Include="resources\shaders\shadow_mapping_depth.vs" />
     <None Include="resources\shaders\skybox.fs" />
     <None Include="resources\shaders\skybox.vs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="LDTA-engine.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="..\x64\Debug\cute_animal_chicken_cartoon_icon_260620.ico" />
+    <Image Include="resources\textures\cute_animal_chicken_cartoon_icon.ico" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
