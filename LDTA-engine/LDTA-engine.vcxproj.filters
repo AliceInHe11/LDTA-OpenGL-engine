@@ -101,9 +101,6 @@
     </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
-    <Image Include="..\x64\Debug\cute_animal_chicken_cartoon_icon_260620.ico">
-      <Filter>Resource Files</Filter>
-    </Image>
     <Image Include="resources\textures\cute_animal_chicken_cartoon_icon.ico">
       <Filter>Resource Files</Filter>
     </Image>

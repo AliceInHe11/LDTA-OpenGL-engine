@@ -5,31 +5,32 @@
 #include <intrin.h> 
 #include <array>
 
-//    COLOR CODE	       COLOR
-//      0	                BLACK
-//      1	                BLUE
-//      2	                GREEN
-//      3	                AQUA
-//      4	                RED
-//      5	                PURPLE
-//      6	                YELLOW
-//      7	                WHITE
-//      8	                GRAY
-//      9	                LIGHT BLUE
-//      10(A)               LIGHT GREEN
-//      11(B)               LIGHT AQUA
-//      12(C)               LIGHT RED
-//      13(D)               LIGHT PURPLE
-//      14(E)               LIGHT YELLOW
-//      15(F)               BRIGHT WHITE
+#define BLACK       0
+#define BLUE        1
+#define GREEN       2
+#define AQUA        3
+#define RED         4
+#define PURPLE      5
+#define YELLOW      6
+#define WHITE       7
+#define GRAY        8
+#define LIGHTBLUE   9
+#define LIGHTGREEN  10
+#define LIGHTAQUA   11
+#define LIGHTRED    12
+#define LIGHTPURPLE 13
+#define LIGHTYELLOW 14
+#define BRIGHTWHITE 15
 
 void SET_COLOR(int color)
 {
-    if (color < 0 || color > 15) return;
-    WORD wColor;
+    if (color < 0 || color > 15)
+        color = 7;
 
+    DWORD wColor;
     HANDLE hStdOut = GetStdHandle(STD_OUTPUT_HANDLE);
     CONSOLE_SCREEN_BUFFER_INFO csbi;
+
     if (GetConsoleScreenBufferInfo(hStdOut, &csbi))
     {
         wColor = (csbi.wAttributes & 0xF0) + (color & 0x0F);
@@ -80,13 +81,13 @@ std::string GetCpuInfo()
     return cpu + " (" + std::to_string(sysInfo.dwNumberOfProcessors) + " CPUs)";
 }
 
-int SystemMemoryInfo() {
+std::string SystemMemoryInfo() {
 
     MEMORYSTATUSEX statex;
     statex.dwLength = sizeof(statex);
     GlobalMemoryStatusEx(&statex);
 
-    return (statex.ullTotalPhys / 1024) / 1024;// MB
+    return std::to_string((statex.ullTotalPhys / 1024) / 1024) + " MB";
 }
 
 #endif

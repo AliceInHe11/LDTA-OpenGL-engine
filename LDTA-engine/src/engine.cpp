@@ -1,3 +1,10 @@
+// Prevent accidentally selecting integrated GPU
+// ---------------------------------------------
+extern "C" {
+    __declspec(dllexport) unsigned __int32 AmdPowerXpressRequestHighPerformance = 0x1;
+    __declspec(dllexport) unsigned __int32 NvOptimusEnablement = 0x1;
+}
+
 #include "engine.h"
 
 int main()
@@ -28,7 +35,7 @@ int main()
     if (ScreenValue.SCREEN_MODE == 0)
     {
         window = glfwCreateWindow(ScreenValue.SCR_WIDTH, ScreenValue.SCR_HEIGHT, "LDTA - OPENGL ENGINE", NULL, NULL); // window screen
-        windowPosition(ScreenValue, WindowsPos);
+        setWindowPosition(ScreenValue, WindowsPos);
         glfwSetWindowPos(window, WindowsPos.WINDOWS_POS_X, WindowsPos.WINDOWS_POS_Y);
     }
     if (window == NULL)
@@ -65,7 +72,7 @@ int main()
         std::cout << "OpenGL functions succesfully loaded." << std::endl;
         std::cout << "Version: " + std::string((char*)glGetString(GL_VERSION)) << " - (Major: " + std::to_string(GLVersion.major) + ", Minor: " + std::to_string(GLVersion.minor) << ")" << std::endl;
         std::cout << "Driver: " + std::string((char*)glGetString(GL_VENDOR)) << std::endl;
-        std::cout << "Total System Memory (RAM): " << SystemMemoryInfo() << " MB" << endl;
+        std::cout << "Total System Memory (RAM): " + SystemMemoryInfo() << endl;
         std::cout << "Processor: " + GetCpuInfo() << std::endl;
         std::cout << "Renderer: " + std::string((char*)glGetString(GL_RENDERER)) << std::endl;
         std::cout << "Shading language version: " + std::string((char*)glGetString(GL_SHADING_LANGUAGE_VERSION)) << std::endl;   

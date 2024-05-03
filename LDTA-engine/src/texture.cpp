@@ -10,7 +10,7 @@ unsigned int loadTexture(char const* path)
     unsigned char* data = stbi_load(path, &width, &height, &nrComponents, 0);
     if (data)
     {
-        GLenum format;
+        unsigned int format;
         if (nrComponents == 1)
             format = GL_RED;
         else if (nrComponents == 3)
@@ -27,16 +27,16 @@ unsigned int loadTexture(char const* path)
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-        SET_COLOR(2);
+        SET_COLOR(LIGHTGREEN);
         std::cout << "Texture succeed to load at path: " << path << std::endl;
-        SET_COLOR(7);
+        SET_COLOR(WHITE);
         stbi_image_free(data);
     }
     else
     {
-        SET_COLOR(4);
+        SET_COLOR(RED);
         std::cout << "Texture failed to load at path: " << path << std::endl;
-        SET_COLOR(7);
+        SET_COLOR(WHITE);
         stbi_image_free(data);
     }
 
@@ -59,15 +59,15 @@ unsigned int loadCubemap(vector<std::string> faces)
         {
             glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
             stbi_image_free(data);
-            SET_COLOR(2);
+            SET_COLOR(LIGHTGREEN);
             std::cout << "Cubemap texture succeed to load at path: " << faces[i] << std::endl;
-            SET_COLOR(7);
+            SET_COLOR(WHITE);
         }
         else
         {
-            SET_COLOR(4);
+            SET_COLOR(RED);
             std::cout << "Cubemap texture failed to load at path: " << faces[i] << std::endl;
-            SET_COLOR(7);
+            SET_COLOR(WHITE);
             stbi_image_free(data);
         }
     }

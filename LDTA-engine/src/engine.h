@@ -1,3 +1,6 @@
+#ifndef ENGINE_H
+#define ENGINE_H
+
 #include <iostream>
 #include <vector> 
 #include <iostream>
@@ -166,11 +169,11 @@ void readVideoConfig(const std::string& filename, ShadowInfo &value) {
         file.close();
 
         if (value.SHADOW_RANGE < 0) {
-            cout << "INVLID VALUE - RESTORE TO DEFAULT RANGE (20).";
+            cout << "INVLID VALUE - RESTORE TO DEFAULT RANGE (10).";
             value.SHADOW_RANGE = 10;
         }
         if (value.SHADOW_WIDTH < 0 || value.SHADOW_HEIGHT < 0) {
-            cout << endl << "INVLID VALUE - RESTORE TO DEFAULT (2048)." << endl;
+            cout << endl << "INVLID VALUE - RESTORE TO DEFAULT (512x512)." << endl;
             value.SHADOW_WIDTH = 512;
             value.SHADOW_HEIGHT = 512;
         }
@@ -240,3 +243,4 @@ void engineResource(vector <Shader>& Shaderlist, vector <Model>& ModelList, vect
     faces = get;
 }
 
+#endif

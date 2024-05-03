@@ -70,9 +70,9 @@ private:
 
         // process ASSIMP's root node recursively
         processNode(scene->mRootNode, scene);
-        SET_COLOR(2);
+        SET_COLOR(LIGHTGREEN);
         std::cout << "Model succeed to load at path: " << path << std::endl;
-        SET_COLOR(7);
+        SET_COLOR(WHITE);
     }
 
     // processes a node in a recursive fashion. Processes each individual mesh located at the node and repeats this process on its children nodes (if any).

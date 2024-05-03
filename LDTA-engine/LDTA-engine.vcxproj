@@ -164,7 +164,6 @@
     <ResourceCompile Include="LDTA-engine.rc" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="..\x64\Debug\cute_animal_chicken_cartoon_icon_260620.ico" />
     <Image Include="resources\textures\cute_animal_chicken_cartoon_icon.ico" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

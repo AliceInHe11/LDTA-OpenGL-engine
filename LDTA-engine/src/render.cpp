@@ -16,14 +16,25 @@ void renderQuad();
 // renders the 3D scene
 // --------------------
 void renderScene(const Shader& shader, vector <unsigned int>& Texture,bool renderDepth)
-{
+{   
+    if (renderDepth == false) {
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D,0);
+    }
+
+    glm::mat4 model = glm::mat4(1.0f);
+    model = glm::translate(model, glm::vec3(sin(glfwGetTime()) * 5.5f, 10.0f, cos(glfwGetTime()) * 5.5f));
+    model = glm::scale(model, glm::vec3(0.25f));
+    shader.setMat4("model", model);
+    renderCube();
+
     if (renderDepth == false) {
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, Texture[0]);
     }
 
     // floor
-    glm::mat4 model = glm::mat4(1.0f);
+    model = glm::mat4(1.0f);
     shader.setMat4("model", model);
     glBindVertexArray(planeVAO);
     glDrawArrays(GL_TRIANGLES, 0, 6);
@@ -105,12 +116,6 @@ void renderScene(const Shader& shader, vector <unsigned int>& Texture,bool rende
     model = glm::mat4(1.0f);
     model = glm::translate(model, glm::vec3(sin(glfwGetTime()) * 1.5f - 0.25f, sin(glfwGetTime() / 5.0f) + 2.5f, cos(glfwGetTime()) * 2.0f - 0.25f));
     model = glm::rotate(model, glm::radians((float)-glfwGetTime() * 300.0f), glm::normalize(glm::vec3(1.0, 0.0, 1.0)));
-    model = glm::scale(model, glm::vec3(0.25f));
-    shader.setMat4("model", model);
-    renderCube();
-
-    model = glm::mat4(1.0f);
-    model = glm::translate(model, glm::vec3(sin(glfwGetTime()) * 3.0f, cos(glfwGetTime()) * 2.0f, 5.0 + cos(glfwGetTime()) * 1.0f));
     model = glm::scale(model, glm::vec3(0.25f));
     shader.setMat4("model", model);
     renderCube();

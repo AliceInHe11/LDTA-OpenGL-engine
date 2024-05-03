@@ -25,7 +25,7 @@ bool firstMouse = true;
 float deltaTime = 0.0f;
 float lastFrame = 0.0f;
 
-void windowPosition(ScreenInfo ScreenValue, WindowsPosition &WindowsPos) {
+void setWindowPosition(ScreenInfo ScreenValue, WindowsPosition &WindowsPos) {
     const GLFWvidmode* mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
 
     if (mode->width >= ScreenValue.SCR_WIDTH && mode->height >= ScreenValue.SCR_HEIGHT) {

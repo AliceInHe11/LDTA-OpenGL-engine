@@ -94,9 +94,9 @@ public:
         glDeleteShader(fragment);
         if (geometryPath != nullptr)
             glDeleteShader(geometry);
-        SET_COLOR(2);
+        SET_COLOR(LIGHTGREEN);
         std::cout << "Shader built and compiled successfully at path: " << vertexPath << std::endl << "\t\t\t\t\t\t" << fragmentPath << std::endl;
-        SET_COLOR(7);
+        SET_COLOR(WHITE);
     }
     // activate the shader
     // ------------------------------------------------------------------------
