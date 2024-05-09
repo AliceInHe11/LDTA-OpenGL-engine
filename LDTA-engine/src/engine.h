@@ -37,7 +37,7 @@ struct EngineInfo
 {
     int MAJOR_VERSION;
     int MINOR_VERSION;
-    int SAMPLES_VALUE;
+    int SAMPLES_LEVEL;
 };
 
 // set up vertex data (and buffer(s)) and configure vertex attributes
@@ -117,10 +117,10 @@ glm::mat4* view = new glm::mat4;
 
 // render info
 // -----------
-vector <unsigned int> Texture;
-vector <string> faces;
-vector <Shader> Shaderlist;
-vector <Model> ModelList;
+std::vector <unsigned int> Texture;
+std::vector <std::string> faces;
+std::vector <Shader> Shaderlist;
+std::vector <Model> ModelList;
 
 void readEnginConfig(const std::string& filename, EngineInfo& value) {
     std::ifstream file(filename);
@@ -133,7 +133,7 @@ void readEnginConfig(const std::string& filename, EngineInfo& value) {
         if (std::getline(file, line))
             value.MINOR_VERSION = std::stoi(line);
         if (std::getline(file, line))
-            value.SAMPLES_VALUE = std::stoi(line);
+            value.SAMPLES_LEVEL = std::stoi(line);
         file.close();
 
         if (value.MAJOR_VERSION < 3 || value.MAJOR_VERSION > 4) 
@@ -142,16 +142,16 @@ void readEnginConfig(const std::string& filename, EngineInfo& value) {
         if (value.MINOR_VERSION < 3 || value.MINOR_VERSION > 6) 
             value.MINOR_VERSION = 3;
 
-        if (value.SAMPLES_VALUE < 0 || value.SAMPLES_VALUE > 16)
-            value.SAMPLES_VALUE = 4;
+        if (value.SAMPLES_LEVEL < 0 || value.SAMPLES_LEVEL > 16)
+            value.SAMPLES_LEVEL = 4;
         
     }
     else
     {
-        cout << "CAN NOT OPEN CONFIG FILE - USING DEFAULT CONFIG.";
+        std::cout << "CAN NOT OPEN CONFIG FILE - USING DEFAULT CONFIG.";
         value.MAJOR_VERSION = 3;
         value.MINOR_VERSION = 3;
-        value.SAMPLES_VALUE = 4;
+        value.SAMPLES_LEVEL = 4;
     }
 }
 
@@ -169,42 +169,43 @@ void readVideoConfig(const std::string& filename, ShadowInfo &value) {
         file.close();
 
         if (value.SHADOW_RANGE < 0) {
-            cout << "INVLID VALUE - RESTORE TO DEFAULT RANGE (10).";
+            std::cout << "INVLID VALUE - RESTORE TO DEFAULT RANGE (10).";
             value.SHADOW_RANGE = 10;
         }
         if (value.SHADOW_WIDTH < 0 || value.SHADOW_HEIGHT < 0) {
-            cout << endl << "INVLID VALUE - RESTORE TO DEFAULT (512x512)." << endl;
+            std::cout << std::endl << "INVLID VALUE - RESTORE TO DEFAULT (512x512)." << std::endl;
             value.SHADOW_WIDTH = 512;
             value.SHADOW_HEIGHT = 512;
         }
 
-        cout << "SHADOW RANGE: " << value.SHADOW_RANGE;
-        cout << endl << "SHADOW MAP RESOLUTION: " << value.SHADOW_WIDTH << "x" << value.SHADOW_HEIGHT << endl;
+        std::cout << "SHADOW RANGE: " << value.SHADOW_RANGE;
+        std::cout << std::endl << "SHADOW MAP RESOLUTION: " << value.SHADOW_WIDTH << "x" << value.SHADOW_HEIGHT << std::endl;
     }
     else 
     {
-        cout << "CAN NOT OPEN CONFIG FILE - USING DEFAULT CONFIG.";
+        std::cout << "CAN NOT OPEN CONFIG FILE - USING DEFAULT CONFIG.";
         value.SHADOW_RANGE = 10;
         value.SHADOW_WIDTH = 512;
         value.SHADOW_HEIGHT = 512;
     }
 }
 
-void engineResource(vector <Shader>& Shaderlist, vector <Model>& ModelList, vector <unsigned int>& Texture, vector<string>& faces )
+void engineResource(std::vector <Shader>& Shaderlist, std::vector <Model>& ModelList, std::vector <unsigned int>& Texture, std::vector<std::string>& faces )
 {
     // build and compile shaders
     // -------------------------
-    cout << endl;
+    std::cout << std::endl;
     Shaderlist.push_back(Shader("resources/shaders/shadow_mapping.vs", "resources/shaders/shadow_mapping.fs"));
     Shaderlist.push_back(Shader("resources/shaders/shadow_mapping_depth.vs", "resources/shaders/shadow_mapping_depth.fs"));
     Shaderlist.push_back(Shader("resources/shaders/debug_quad.vs", "resources/shaders/debug_quad_depth.fs"));
     Shaderlist.push_back(Shader("resources/shaders/skybox.vs", "resources/shaders/skybox.fs"));
     Shaderlist.push_back(Shader("resources/shaders/normal_mapping.vs", "resources/shaders/normal_mapping.fs"));
+    Shaderlist.push_back(Shader("resources/shaders/model_loading.vs", "resources/shaders/model_loading.fs"));
 
     // load models
     // ------------
     // tell stb_image.h to flip loaded texture's on the y-axis (before loading model).
-    cout << endl;
+    std::cout << std::endl;
     stbi_set_flip_vertically_on_load(true);
     ModelList.push_back(Model("resources/objects/backpack/backpack.obj"));
     stbi_set_flip_vertically_on_load(false);
@@ -218,10 +219,11 @@ void engineResource(vector <Shader>& Shaderlist, vector <Model>& ModelList, vect
     ModelList.push_back(Model("resources/objects/sponza/sponza.obj"));
     ModelList.push_back(Model("resources/objects/woodentower/woodentower.obj"));
     ModelList.push_back(Model("resources/objects/container/container.obj"));
+    ModelList.push_back(Model("resources/objects/weapons/ak47.obj"));
 
     // load textures
     // -------------
-    cout << endl;
+    std::cout << std::endl;
     Texture.push_back(loadTexture("resources/textures/dirt.bmp"));
     Texture.push_back(loadTexture("resources/textures/dirt3.bmp"));
     Texture.push_back(loadTexture("resources/textures/ambatukam.bmp"));
@@ -230,8 +232,8 @@ void engineResource(vector <Shader>& Shaderlist, vector <Model>& ModelList, vect
 
     // load sky box textures
     // ---------------------
-    cout << endl;
-    vector <string> get
+    std::cout << std::endl;
+    std::vector <std::string> get
     {
         "resources/textures/skybox/right.jpg",
         "resources/textures/skybox/left.jpg",

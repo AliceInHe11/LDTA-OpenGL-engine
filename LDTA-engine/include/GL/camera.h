@@ -18,7 +18,7 @@ enum Camera_Movement {
 // Default camera values
 const float YAW = -90.0f;
 const float PITCH = 0.0f;
-const float SPEED = 1.0f;
+const float SPEED = 1.25f;
 const float SENSITIVITY = 0.05f;
 const float ZOOM = 60.0f;
 
@@ -71,9 +71,11 @@ public:
     {
         float velocity = MovementSpeed * deltaTime;
         if (direction == FORWARD)
-            Position += Front * velocity;
+            //Position += Front * velocity;
+            Position += glm::vec3(glm::cos(glm::radians(Yaw)), 0, glm::sin(glm::radians(Yaw))) * velocity; //Y is not affected, Y is looking up
         if (direction == BACKWARD)
-            Position -= Front * velocity;
+            //Position -= Front * velocity;
+            Position -= glm::vec3(glm::cos(glm::radians(Yaw)), 0, glm::sin(glm::radians(Yaw))) * velocity; //Y is not affected, Y is looking up
         if (direction == LEFT)
             Position -= Right * velocity;
         if (direction == RIGHT)
@@ -128,8 +130,8 @@ private:
         Front = glm::normalize(front);
         // also re-calculate the Right and Up vector
         Right = glm::normalize(glm::cross(Front, WorldUp));  // normalize the vectors, because their length gets closer to 0 the more you look up or down which results in slower movement.
-        Up = glm::normalize(glm::cross(Right, Front));
+        //Up = glm::normalize(glm::cross(Right, Front));
+        Up = glm::normalize(glm::cross(Right, glm::vec3(glm::cos(glm::radians(Yaw)), 0, glm::sin(glm::radians(Yaw)))));
     }
 };
 #endif
-#pragma once

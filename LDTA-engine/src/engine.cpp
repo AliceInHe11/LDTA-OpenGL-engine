@@ -1,23 +1,34 @@
+#ifdef _WIN64
+
 // Prevent accidentally selecting integrated GPU
 // ---------------------------------------------
-extern "C" {
-    __declspec(dllexport) unsigned __int32 AmdPowerXpressRequestHighPerformance = 0x1;
-    __declspec(dllexport) unsigned __int32 NvOptimusEnablement = 0x1;
+extern "C" 
+{
+    __declspec(dllexport) unsigned __int64 AmdPowerXpressRequestHighPerformance = 0x1;
+    __declspec(dllexport) unsigned __int64 NvOptimusEnablement = 0x1;
 }
 
 #include "engine.h"
 
 int main()
 {
-    EngineInfo engine;
-    readEnginConfig("config/engineconfig.txt", engine);
-
     // glfw: initialize and configure
     // ------------------------------
-    glfwInit();
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, engine.MAJOR_VERSION);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, engine.MINOR_VERSION);
-    glfwWindowHint(GLFW_SAMPLES, engine.SAMPLES_VALUE);
+    if (!glfwInit())
+    {
+        SET_COLOR(RED);
+        std::cout << "Failed to initializes the GLFW libary !";
+        SET_COLOR(WHITE);
+        system("pause");
+        return -1;
+    }
+
+    EngineInfo engineConfig;
+    readEnginConfig("config/engineconfig.txt", engineConfig);
+
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, engineConfig.MAJOR_VERSION);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, engineConfig.MINOR_VERSION);
+    glfwWindowHint(GLFW_SAMPLES, engineConfig.SAMPLES_LEVEL);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
 #ifdef __APPLE__
@@ -27,7 +38,6 @@ int main()
     // glfw window creation
     // --------------------
     readWindowConfig("config/windowconfig.txt", ScreenValue);
-
     GLFWwindow* window = NULL;
     if (ScreenValue.SCREEN_MODE == 1)
         window = glfwCreateWindow(ScreenValue.SCR_WIDTH, ScreenValue.SCR_HEIGHT, "LDTA - OPENGL ENGINE", glfwGetPrimaryMonitor(), NULL); // full screen
@@ -38,9 +48,12 @@ int main()
         setWindowPosition(ScreenValue, WindowsPos);
         glfwSetWindowPos(window, WindowsPos.WINDOWS_POS_X, WindowsPos.WINDOWS_POS_Y);
     }
-    if (window == NULL)
+
+    if (!window)
     {
-        std::cout << "Failed to create GLFW window" << std::endl;
+        SET_COLOR(RED);
+        std::cout << "Failed to create GLFW window !" << std::endl;
+        SET_COLOR(WHITE);
         glfwTerminate();
         system("pause");
         return -1;
@@ -63,7 +76,10 @@ int main()
     // ---------------------------------------
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
     {
+        SET_COLOR(RED);
         std::cout << "Failed to initialize GLAD" << std::endl;
+        SET_COLOR(WHITE);
+        glfwTerminate();
         system("pause");
         return -1;
     }
@@ -72,7 +88,7 @@ int main()
         std::cout << "OpenGL functions succesfully loaded." << std::endl;
         std::cout << "Version: " + std::string((char*)glGetString(GL_VERSION)) << " - (Major: " + std::to_string(GLVersion.major) + ", Minor: " + std::to_string(GLVersion.minor) << ")" << std::endl;
         std::cout << "Driver: " + std::string((char*)glGetString(GL_VENDOR)) << std::endl;
-        std::cout << "Total System Memory (RAM): " + SystemMemoryInfo() << endl;
+        std::cout << "Total System Memory (RAM): " + SystemMemoryInfo() << std::endl;
         std::cout << "Processor: " + GetCpuInfo() << std::endl;
         std::cout << "Renderer: " + std::string((char*)glGetString(GL_RENDERER)) << std::endl;
         std::cout << "Shading language version: " + std::string((char*)glGetString(GL_SHADING_LANGUAGE_VERSION)) << std::endl;   
@@ -158,7 +174,7 @@ int main()
     Shaderlist[3].use();
     Shaderlist[3].setInt("skybox", 0);
 
-    cout << "AMBATUKAM!!!!!!!!!!!!";
+    std::cout << "AMBATUKAM!!!!!!!!!!!!";
 
     // render loop
     // -----------
@@ -238,8 +254,12 @@ int main()
         glBindTexture(GL_TEXTURE_2D, depthMaP);
         renderScene(Shaderlist[0], Texture, renderDepth = false);
 
-        // 4. render skybox as last
-        // ----------------------
+        // 4. render view model
+        // --------------------
+        renderViewmodel(Shaderlist[5], ModelList, *projection, *view);
+
+        // 5. render skybox as last
+        // ------------------------
         glDepthFunc(GL_LEQUAL);  // change depth function so depth test passes when values are equal to depth buffer's content
         Shaderlist[3].use();
         *view = glm::mat4(glm::mat3(camera.GetViewMatrix())); // remove translation from the view matrix
@@ -281,4 +301,4 @@ int main()
     system("pause");
     return 0;
 }
-
+#endif

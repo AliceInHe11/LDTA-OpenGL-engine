@@ -51,27 +51,27 @@ void readWindowConfig(const std::string& filename, ScreenInfo &ScreenValue) {
         file.close();
 
         if (ScreenValue.SCR_WIDTH <= 0 || ScreenValue.SCR_HEIGHT <= 0) {
-            cout << "INVLID RESOLUTION VALUE - RESTORE TO DEFAULT RESOLUTION (800x600).";
+            std::cout << "INVLID RESOLUTION VALUE - RESTORE TO DEFAULT RESOLUTION (800x600).";
             ScreenValue.SCR_WIDTH = 800;
             ScreenValue.SCR_HEIGHT = 600;
         }
         if (ScreenValue.SCREEN_MODE < 0 || ScreenValue.SCREEN_MODE > 1) {
-            cout << endl << "INVLID WINDOW MODE VALUE - RESTORE TO DEFAULT WINDOW MODE (WINDOWSCREEN).";
+            std::cout << std::endl << "INVLID WINDOW MODE VALUE - RESTORE TO DEFAULT WINDOW MODE (WINDOWSCREEN).";
             ScreenValue.SCREEN_MODE = 0;
         }
 
-        cout << "Window Mode: ";
+        std::cout << "Window Mode: ";
         if (ScreenValue.SCREEN_MODE == 1)
-            cout << "FULLSCREEN";
+            std::cout << "FULLSCREEN";
         else
-            cout << "WINDOWSCREEN";
-        cout << endl << "Resolution: " << ScreenValue.SCR_WIDTH << "x" << ScreenValue.SCR_HEIGHT << endl;
+            std::cout << "WINDOWSCREEN";
+        std::cout << std::endl << "Resolution: " << ScreenValue.SCR_WIDTH << "x" << ScreenValue.SCR_HEIGHT << std::endl;
 
     }
     else {
-        cout << "CAN NOT OPEN CONFIG FILE - USING DEFAULT CONFIG.";
-        cout << endl << "WINDOW MODE: WINDOWSCREEN";
-        cout << endl << "RESOLUTION: 800x600" << endl;
+        std::cout << "CAN NOT OPEN CONFIG FILE - USING DEFAULT CONFIG.";
+        std::cout << std::endl << "WINDOW MODE: WINDOWSCREEN";
+        std::cout << std::endl << "RESOLUTION: 800x600" << std::endl;
     }
 }
 
