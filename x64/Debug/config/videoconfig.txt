@@ -1,3 +1,0 @@
-20	// shadow range
-4096	// shadow width
-4096	// shadow height
