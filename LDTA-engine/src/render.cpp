@@ -19,22 +19,11 @@ void renderScene(const Shader& shader, std::vector <unsigned int>& Texture,bool 
 {   
     if (renderDepth == false) {
         glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D,0);
-    }
-
-    glm::mat4 model = glm::mat4(1.0f);
-    model = glm::translate(model, glm::vec3(sin(glfwGetTime()) * 5.5f, 10.0f, cos(glfwGetTime()) * 5.5f));
-    model = glm::scale(model, glm::vec3(0.25f));
-    shader.setMat4("model", model);
-    renderCube();
-
-    if (renderDepth == false) {
-        glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, Texture[0]);
     }
 
     // floor
-    model = glm::mat4(1.0f);
+    glm::mat4 model = glm::mat4(1.0f);
     shader.setMat4("model", model);
     glBindVertexArray(planeVAO);
     glDrawArrays(GL_TRIANGLES, 0, 6);
@@ -380,20 +369,44 @@ void renderModel(Shader& shader, std::vector <Model>& ModelList, unsigned int& d
 
 // renders the 3D view model
 // --------------------------
-void renderViewmodel(Shader& shader, std::vector <Model>& ModelList, glm::mat4& projection, glm::mat4& view)
+void renderViewmodel(Shader& shader, std::vector <Model>& ModelList, glm::mat4& projection, glm::mat4& view, unsigned int weaponsNum)
 {
     shader.use();
     shader.setMat4("projection", projection);
     shader.setMat4("view", view);
-    glm::mat4 model = glm::mat4(1.0f);
-    //model = glm::translate(model, glm::vec3(0.35f, -0.50f, -0.95f));
-    model = glm::translate(model, glm::vec3(0.35f, -0.70f, -0.85f));
-    model = glm::rotate(model, glm::radians(-90.0f), glm::vec3(0.0, 1.0, 0.0));
-    model = glm::scale(model, glm::vec3(0.005f));
-    model = glm::inverse(view) * model;
+    glm::mat4 model;
 
-    shader.setMat4("model", model);
-    ModelList[11].Draw_m(shader);
+    switch (weaponsNum)
+    {
+        case 0:
+            model = glm::mat4(1.0f);
+            //model = glm::translate(model, glm::vec3(0.35f, -0.50f, -0.95f));
+            model = glm::translate(model, glm::vec3(0.35f, -0.70f, -0.85f));
+            model = glm::rotate(model, glm::radians(-90.0f), glm::vec3(0.0, 1.0, 0.0));
+            model = glm::scale(model, glm::vec3(0.005f));
+            model = glm::inverse(view) * model;
+
+            shader.setMat4("model", model);
+            ModelList[11].Draw_m(shader);
+
+            break;
+
+        case 1:
+            model = glm::mat4(1.0f);
+            model = glm::translate(model, glm::vec3(0.35f, -0.50f, -0.95f));
+            //model = glm::translate(model, glm::vec3(0.35f, -0.70f, -0.85f));
+            model = glm::rotate(model, glm::radians(-90.0f), glm::vec3(0.0, 1.0, 0.0));
+            model = glm::scale(model, glm::vec3(0.15f));
+            model = glm::inverse(view) * model;
+
+            shader.setMat4("model", model);
+            ModelList[0].Draw_m(shader);
+
+            break;
+
+        default:
+            break;
+    }
 }
 
 // renderCube() renders a 1x1 3D cube in NDC.

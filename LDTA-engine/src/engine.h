@@ -102,7 +102,6 @@ float skyboxVertices[] = {
 
 // lighting info
 // -------------
-glm::vec3 lightPos(3.0f, 10.0f, 3.0f);
 float ambientIntensity = 0.75f;
 glm::vec3 lightColor(0.75f, 0.75f, 0.75f);
 bool renderDepth;

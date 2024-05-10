@@ -68,6 +68,7 @@ int main()
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
     glfwSetCursorPosCallback(window, mouse_callback);
     glfwSetScrollCallback(window, scroll_callback);
+    glfwSetKeyCallback(window, key_callback);
 
     // tell GLFW to capture the mouse
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
@@ -191,8 +192,11 @@ int main()
         processInput(window);
 
         // change light position over time
-        lightPos.x = sin(glfwGetTime()) * 5.5f;
-        lightPos.z = cos(glfwGetTime()) * 5.5f;
+        if (DynamicPos==true)
+        {
+            lightPos.x = sin(glfwGetTime()) * 5.5f;
+            lightPos.z = cos(glfwGetTime()) * 5.5f;
+        }
         //lightPos.y = 5.0 + cos(glfwGetTime()) * 1.0f ;
         changeLightPos(window, lightPos);
         changeLightInfo(window, lightColor, ambientIntensity);
@@ -256,7 +260,7 @@ int main()
 
         // 4. render view model
         // --------------------
-        renderViewmodel(Shaderlist[5], ModelList, *projection, *view);
+        renderViewmodel(Shaderlist[5], ModelList, *projection, *view, weaponsNum);
 
         // 5. render skybox as last
         // ------------------------

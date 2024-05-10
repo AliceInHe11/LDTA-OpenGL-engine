@@ -25,6 +25,13 @@ bool firstMouse = true;
 float deltaTime = 0.0f;
 float lastFrame = 0.0f;
 
+// light position
+glm::vec3 lightPos(3.0f, 10.0f, 3.0f);
+bool DynamicPos = true;
+
+// weapon switch
+unsigned int weaponsNum = 0;
+
 void setWindowPosition(ScreenInfo ScreenValue, WindowsPosition &WindowsPos) {
     const GLFWvidmode* mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
 
@@ -164,6 +171,23 @@ void mouse_callback(GLFWwindow* window, double xposIn, double yposIn)
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 {
     camera.ProcessMouseScroll(static_cast<float>(yoffset));
+}
+
+// glfw: whenever the key are press, this callback is called
+// ----------------------------------------------------------------------
+void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
+{
+    if (key == GLFW_KEY_O && action == GLFW_PRESS)
+        if(DynamicPos == true)     
+            DynamicPos = false;   
+        else
+            DynamicPos = true;
+
+    if (key == GLFW_KEY_1 && action == GLFW_PRESS)
+        weaponsNum = 0;
+    else
+    if (key == GLFW_KEY_2 && action == GLFW_PRESS)
+        weaponsNum = 1;
 }
 
 void changeLightPos(GLFWwindow* window, glm::vec3& lightPos) {
