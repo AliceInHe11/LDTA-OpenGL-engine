@@ -188,6 +188,9 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
     else
     if (key == GLFW_KEY_2 && action == GLFW_PRESS)
         weaponsNum = 1;
+    else
+    if (key == GLFW_KEY_3 && action == GLFW_PRESS)
+        weaponsNum = 2;
 }
 
 void changeLightPos(GLFWwindow* window, glm::vec3& lightPos) {

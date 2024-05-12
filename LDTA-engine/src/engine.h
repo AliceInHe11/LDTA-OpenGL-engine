@@ -109,17 +109,26 @@ glm::mat4* lightProjection = new glm::mat4;
 glm::mat4* lightView = new glm::mat4;
 glm::mat4* lightSpaceMatrix = new glm::mat4;
 
-// camera info
-// -----------
+// view info
+// ----------
 glm::mat4* projection = new glm::mat4;
 glm::mat4* view = new glm::mat4;
 
 // render info
 // -----------
-std::vector <unsigned int> Texture;
+std::vector <unsigned int> texture;
 std::vector <std::string> faces;
 std::vector <Shader> Shaderlist;
 std::vector <Model> ModelList;
+
+// define shader numners
+// ---------------------
+#define s_SHADOWMAP     0
+#define s_DEPTHMAP      1
+#define s_DEBUGQUAD     2
+#define s_SKYBOX        3
+#define s_NORMALMAP     4
+#define s_MODELDRAW     5
 
 void readEnginConfig(const std::string& filename, EngineInfo& value) {
     std::ifstream file(filename);
@@ -219,6 +228,7 @@ void engineResource(std::vector <Shader>& Shaderlist, std::vector <Model>& Model
     ModelList.push_back(Model("resources/objects/woodentower/woodentower.obj"));
     ModelList.push_back(Model("resources/objects/container/container.obj"));
     ModelList.push_back(Model("resources/objects/weapons/ak47.obj"));
+    ModelList.push_back(Model("resources/objects/weapons/StingSword.obj"));
 
     // load textures
     // -------------

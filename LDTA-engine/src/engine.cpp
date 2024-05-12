@@ -107,7 +107,7 @@ int main()
 
     // set up render data 
     // ------------------
-    engineResource(Shaderlist, ModelList, Texture, faces);
+    engineResource(Shaderlist, ModelList, texture, faces);
     unsigned int cubemapTexture = loadCubemap(faces);
 
     // configure VAO 
@@ -160,20 +160,20 @@ int main()
 
     // shader configuration
     // --------------------
-    Shaderlist[0].use();
-    Shaderlist[0].setInt("shadowMap", 1);
-    Shaderlist[0].setInt("diffuseTexture", 0);
+    Shaderlist[s_SHADOWMAP].use();
+    Shaderlist[s_SHADOWMAP].setInt("shadowMap", 1);
+    Shaderlist[s_SHADOWMAP].setInt("diffuseTexture", 0);
 
-    Shaderlist[2].use();
-    Shaderlist[2].setInt("depthMap", 0);
+    Shaderlist[s_DEBUGQUAD].use();
+    Shaderlist[s_DEBUGQUAD].setInt("depthMap", 0);
 
-    Shaderlist[4].use();
-    Shaderlist[4].setInt("diffuseMap", 0);
-    Shaderlist[4].setInt("normalMap", 1);
-    Shaderlist[4].setInt("shadowMap", 1);
+    Shaderlist[s_NORMALMAP].use();
+    Shaderlist[s_NORMALMAP].setInt("diffuseMap", 0);
+    Shaderlist[s_NORMALMAP].setInt("normalMap", 1);
+    Shaderlist[s_NORMALMAP].setInt("shadowMap", 1);
 
-    Shaderlist[3].use();
-    Shaderlist[3].setInt("skybox", 0);
+    Shaderlist[s_SKYBOX].use();
+    Shaderlist[s_SKYBOX].setInt("skybox", 0);
 
     std::cout << "AMBATUKAM!!!!!!!!!!!!";
 
@@ -186,6 +186,14 @@ int main()
         float currentFrame = static_cast<float>(glfwGetTime());
         deltaTime = currentFrame - lastFrame;
         lastFrame = currentFrame;
+
+        float near_plane = 0.15f, far_plane = 30.5f;
+        //lightProjection = glm::perspective(glm::radians(45.0f), (GLfloat)SHADOW_WIDTH / (GLfloat)SHADOW_HEIGHT, near_plane, far_plane); // note that if you use a perspective projection matrix you'll have to change the light position as the current light position isn't enough to reflect the whole scene
+        *lightProjection = glm::ortho(-(float)value.SHADOW_RANGE, (float)value.SHADOW_RANGE, -(float)value.SHADOW_RANGE, (float)value.SHADOW_RANGE, near_plane, far_plane);
+        *lightView = glm::lookAt(lightPos, glm::vec3(0.0f), glm::vec3(0.0, 1.0, 0.0));
+        *lightSpaceMatrix = *lightProjection * *lightView;
+        *projection = glm::perspective(glm::radians(camera.Zoom), (float)ScreenValue.SCR_WIDTH / (float)ScreenValue.SCR_HEIGHT, 0.1f, 100.0f);
+        *view = camera.GetViewMatrix();
 
         // input
         // -----
@@ -208,70 +216,63 @@ int main()
 
         // 1. render depth of scene to texture (from light's perspective)
         // --------------------------------------------------------------
-        float near_plane = 0.15f, far_plane = 30.5f;
-        //lightProjection = glm::perspective(glm::radians(45.0f), (GLfloat)SHADOW_WIDTH / (GLfloat)SHADOW_HEIGHT, near_plane, far_plane); // note that if you use a perspective projection matrix you'll have to change the light position as the current light position isn't enough to reflect the whole scene
-        *lightProjection = glm::ortho(-(float)value.SHADOW_RANGE, (float)value.SHADOW_RANGE, -(float)value.SHADOW_RANGE, (float)value.SHADOW_RANGE, near_plane, far_plane);
-        *lightView = glm::lookAt(lightPos, glm::vec3(0.0f), glm::vec3(0.0, 1.0, 0.0));
-        *lightSpaceMatrix = *lightProjection * *lightView;
         // render scene from light's point of view
-        Shaderlist[1].use();
-        Shaderlist[1].setMat4("lightSpaceMatrix", *lightSpaceMatrix);
+        Shaderlist[s_DEPTHMAP].use();
+        Shaderlist[s_DEPTHMAP].setMat4("lightSpaceMatrix", *lightSpaceMatrix);
 
         glViewport(0, 0, value.SHADOW_WIDTH, value.SHADOW_HEIGHT);
         glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
         glClear(GL_DEPTH_BUFFER_BIT);
-        renderScene(Shaderlist[1], Texture, renderDepth = true);
-        renderModel(Shaderlist[1], ModelList, depthMaP, renderDepth = true);
+        renderScene(Shaderlist[s_DEPTHMAP], texture, renderDepth = true);
+        renderModel(Shaderlist[s_DEPTHMAP], ModelList, depthMaP, renderDepth = true);
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
         // reset viewport
         glViewport(0, 0, ScreenValue.SCR_WIDTH, ScreenValue.SCR_HEIGHT);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        *projection = glm::perspective(glm::radians(camera.Zoom), (float)ScreenValue.SCR_WIDTH / (float)ScreenValue.SCR_HEIGHT, 0.1f, 100.0f);
-        *view = camera.GetViewMatrix();
 
         // 2. render model normal-mapped   
         // -----------------------------
-        Shaderlist[4].use();
-        Shaderlist[4].setMat4("projection", *projection);
-        Shaderlist[4].setMat4("view", *view);
-        Shaderlist[4].setFloat("ambientIntensity", ambientIntensity);
-        Shaderlist[4].setVec3("viewPos", camera.Position);
-        Shaderlist[4].setVec3("lightPos", lightPos);
-        Shaderlist[4].setVec3("lightColor", lightColor);
-        Shaderlist[4].setMat4("lightSpaceMatrix", *lightSpaceMatrix);
+        Shaderlist[s_NORMALMAP].use();
+        Shaderlist[s_NORMALMAP].setMat4("projection", *projection);
+        Shaderlist[s_NORMALMAP].setMat4("view", *view);
+        Shaderlist[s_NORMALMAP].setFloat("ambientIntensity", ambientIntensity);
+        Shaderlist[s_NORMALMAP].setVec3("viewPos", camera.Position);
+        Shaderlist[s_NORMALMAP].setVec3("lightPos", lightPos);
+        Shaderlist[s_NORMALMAP].setVec3("lightColor", lightColor);
+        Shaderlist[s_NORMALMAP].setMat4("lightSpaceMatrix", *lightSpaceMatrix);
         glActiveTexture(GL_TEXTURE1);
         glBindTexture(GL_TEXTURE_2D, depthMaP);
-        renderModel(Shaderlist[4], ModelList,  depthMaP, renderDepth = false);
+        renderModel(Shaderlist[s_NORMALMAP], ModelList,  depthMaP, renderDepth = false);
 
         // 3. render scene as normal using the generated depth/shadow map  
         // --------------------------------------------------------------
-        Shaderlist[0].use();
-        Shaderlist[0].setMat4("projection", *projection);
-        Shaderlist[0].setMat4("view", *view);
-        Shaderlist[0].setVec3("viewPos", camera.Position);
-        Shaderlist[0].setFloat("ambientIntensity", ambientIntensity);
-        Shaderlist[0].setVec3("lightPos", lightPos);
-        Shaderlist[0].setVec3("lightColor", lightColor);
-        Shaderlist[0].setMat4("lightSpaceMatrix", *lightSpaceMatrix);
+        Shaderlist[s_SHADOWMAP].use();
+        Shaderlist[s_SHADOWMAP].setMat4("projection", *projection);
+        Shaderlist[s_SHADOWMAP].setMat4("view", *view);
+        Shaderlist[s_SHADOWMAP].setVec3("viewPos", camera.Position);
+        Shaderlist[s_SHADOWMAP].setFloat("ambientIntensity", ambientIntensity);
+        Shaderlist[s_SHADOWMAP].setVec3("lightPos", lightPos);
+        Shaderlist[s_SHADOWMAP].setVec3("lightColor", lightColor);
+        Shaderlist[s_SHADOWMAP].setMat4("lightSpaceMatrix", *lightSpaceMatrix);
         glActiveTexture(GL_TEXTURE1);
         glBindTexture(GL_TEXTURE_2D, depthMaP);
-        renderScene(Shaderlist[0], Texture, renderDepth = false);
+        renderScene(Shaderlist[s_SHADOWMAP], texture, renderDepth = false);
 
         // 4. render view model
         // --------------------
-        renderViewmodel(Shaderlist[5], ModelList, *projection, *view, weaponsNum);
+        renderViewmodel(Shaderlist[s_MODELDRAW], ModelList, *projection, *view, weaponsNum);
 
         // 5. render skybox as last
         // ------------------------
         glDepthFunc(GL_LEQUAL);  // change depth function so depth test passes when values are equal to depth buffer's content
-        Shaderlist[3].use();
+        Shaderlist[s_SKYBOX].use();
         *view = glm::mat4(glm::mat3(camera.GetViewMatrix())); // remove translation from the view matrix
-        Shaderlist[3].setMat4("view", *view);
-        Shaderlist[3].setMat4("projection", *projection);
+        Shaderlist[s_SKYBOX].setMat4("view", *view);
+        Shaderlist[s_SKYBOX].setMat4("projection", *projection);
         // skybox cube
         glBindVertexArray(skyboxVAO);
-        glActiveTexture(GL_TEXTURE1);
+        glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_CUBE_MAP, cubemapTexture);
         glDrawArrays(GL_TRIANGLES, 0, 36);
         glBindVertexArray(0);
@@ -279,9 +280,9 @@ int main()
 
         // render Depth map to quad for visual debugging
         // ---------------------------------------------
-        //Shaderlist[2].use();
-        //Shaderlist[2].setFloat("near_plane", near_plane);
-        //Shaderlist[2].setFloat("far_plane", far_plane);
+        //Shaderlist[s_DEBUGQUAD].use();
+        //Shaderlist[s_DEBUGQUAD].setFloat("near_plane", near_plane);
+        //Shaderlist[s_DEBUGQUAD].setFloat("far_plane", far_plane);
         //glActiveTexture(GL_TEXTURE0);
         //glBindTexture(GL_TEXTURE_2D, depthMaP);
         //renderQuad();

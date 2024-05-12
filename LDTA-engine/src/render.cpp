@@ -15,7 +15,7 @@ void renderQuad();
 
 // renders the 3D scene
 // --------------------
-void renderScene(const Shader& shader, std::vector <unsigned int>& Texture,bool renderDepth)
+void renderScene(const Shader& shader, std::vector <unsigned int>& Texture,bool &renderDepth)
 {   
     if (renderDepth == false) {
         glActiveTexture(GL_TEXTURE0);
@@ -365,11 +365,12 @@ void renderModel(Shader& shader, std::vector <Model>& ModelList, unsigned int& d
         ModelList[10].DrawShadowCast(shader, depthMaP);
     else
         ModelList[10].Draw(shader);
+
 }
 
 // renders the 3D view model
 // --------------------------
-void renderViewmodel(Shader& shader, std::vector <Model>& ModelList, glm::mat4& projection, glm::mat4& view, unsigned int weaponsNum)
+void renderViewmodel(Shader& shader, std::vector <Model>& ModelList, glm::mat4& projection, glm::mat4& view, unsigned int &weaponsNum)
 {
     shader.use();
     shader.setMat4("projection", projection);
@@ -401,6 +402,20 @@ void renderViewmodel(Shader& shader, std::vector <Model>& ModelList, glm::mat4& 
 
             shader.setMat4("model", model);
             ModelList[0].Draw_m(shader);
+
+            break;
+
+        case 2:
+            model = glm::mat4(1.0f);
+            model = glm::translate(model, glm::vec3(0.65f, -0.50f, -1.95f));
+            //model = glm::translate(model, glm::vec3(0.35f, -0.70f, -0.85f));
+            model = glm::rotate(model, glm::radians(50.0f), glm::vec3(0.0, 1.0, 0.0));
+            model = glm::rotate(model, glm::radians(40.0f), glm::vec3(1.0, 0.0, 0.0));
+            model = glm::scale(model, glm::vec3(0.04f));
+            model = glm::inverse(view) * model;
+
+            shader.setMat4("model", model);
+            ModelList[12].Draw_m(shader);
 
             break;
 
