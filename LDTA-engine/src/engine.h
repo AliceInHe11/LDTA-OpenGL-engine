@@ -130,128 +130,432 @@ std::vector <Model> ModelList;
 #define s_NORMALMAP     4
 #define s_MODELDRAW     5
 
-void readEnginConfig(const std::string& filename, EngineInfo& value) {
-    std::ifstream file(filename);
-
-    if (file.is_open()) 
+class Engine
+{
+public:
+    int engineRun()
     {
-        std::string line;
-        if (std::getline(file, line))
-            value.MAJOR_VERSION = std::stoi(line);
-        if (std::getline(file, line))
-            value.MINOR_VERSION = std::stoi(line);
-        if (std::getline(file, line))
-            value.SAMPLES_LEVEL = std::stoi(line);
-        file.close();
-
-        if (value.MAJOR_VERSION < 3 || value.MAJOR_VERSION > 4) 
-            value.MAJOR_VERSION = 3;
-        
-        if (value.MINOR_VERSION < 3 || value.MINOR_VERSION > 6) 
-            value.MINOR_VERSION = 3;
-
-        if (value.SAMPLES_LEVEL < 0 || value.SAMPLES_LEVEL > 16)
-            value.SAMPLES_LEVEL = 4;
-        
-    }
-    else
-    {
-        std::cout << "CAN NOT OPEN CONFIG FILE - USING DEFAULT CONFIG.";
-        value.MAJOR_VERSION = 3;
-        value.MINOR_VERSION = 3;
-        value.SAMPLES_LEVEL = 4;
-    }
-}
-
-void readVideoConfig(const std::string& filename, ShadowInfo &value) {
-    std::ifstream file(filename);
-    if (file.is_open()) 
-    {
-        std::string line;
-        if (std::getline(file, line))
-            value.SHADOW_RANGE = std::stoi(line);
-        if (std::getline(file, line))
-            value.SHADOW_WIDTH = std::stoi(line);
-        if (std::getline(file, line))
-            value.SHADOW_HEIGHT = std::stoi(line);
-        file.close();
-
-        if (value.SHADOW_RANGE < 0) {
-            std::cout << "INVLID VALUE - RESTORE TO DEFAULT RANGE (10).";
-            value.SHADOW_RANGE = 10;
+        // glfw: initialize and configure
+        // ------------------------------
+        if (!glfwInit())
+        {
+            SET_COLOR(RED);
+            std::cout << "Failed to initializes the GLFW libary !";
+            SET_COLOR(WHITE);
+            system("pause");
+            return -1;
         }
-        if (value.SHADOW_WIDTH < 0 || value.SHADOW_HEIGHT < 0) {
-            std::cout << std::endl << "INVLID VALUE - RESTORE TO DEFAULT (512x512)." << std::endl;
+
+        EngineInfo engineConfig;
+        readEnginConfig("config/engineconfig.txt", engineConfig);
+
+        glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, engineConfig.MAJOR_VERSION);
+        glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, engineConfig.MINOR_VERSION);
+        glfwWindowHint(GLFW_SAMPLES, engineConfig.SAMPLES_LEVEL);
+        glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+
+#ifdef __APPLE__
+        glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+#endif
+
+        // glfw window creation
+        // --------------------
+        readWindowConfig("config/windowconfig.txt", ScreenValue);
+        GLFWwindow* window = NULL;
+        if (ScreenValue.SCREEN_MODE == 1)
+            window = glfwCreateWindow(ScreenValue.SCR_WIDTH, ScreenValue.SCR_HEIGHT, "LDTA - OPENGL ENGINE", glfwGetPrimaryMonitor(), NULL); // full screen
+        else
+            if (ScreenValue.SCREEN_MODE == 0)
+            {
+                window = glfwCreateWindow(ScreenValue.SCR_WIDTH, ScreenValue.SCR_HEIGHT, "LDTA - OPENGL ENGINE", NULL, NULL); // window screen
+                setWindowPosition(ScreenValue, WindowsPos);
+                glfwSetWindowPos(window, WindowsPos.WINDOWS_POS_X, WindowsPos.WINDOWS_POS_Y);
+            }
+
+        if (!window)
+        {
+            SET_COLOR(RED);
+            std::cout << "Failed to create GLFW window !" << std::endl;
+            SET_COLOR(WHITE);
+            glfwTerminate();
+            system("pause");
+            return -1;
+        }
+
+        GLFWimage images[1];
+        images[0].pixels = stbi_load("resources/textures/cute_animal_chicken_cartoon_icon.png", &images[0].width, &images[0].height, 0, 4); //rgba channels 
+        glfwSetWindowIcon(window, 1, images);
+        stbi_image_free(images[0].pixels);
+
+        glfwMakeContextCurrent(window);
+        glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
+        glfwSetCursorPosCallback(window, mouse_callback);
+        glfwSetScrollCallback(window, scroll_callback);
+        glfwSetKeyCallback(window, key_callback);
+
+        // tell GLFW to capture the mouse
+        glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+
+        // glad: load all OpenGL function pointers
+        // ---------------------------------------
+        if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
+        {
+            SET_COLOR(RED);
+            std::cout << "Failed to initialize GLAD" << std::endl;
+            SET_COLOR(WHITE);
+            glfwTerminate();
+            system("pause");
+            return -1;
+        }
+        else
+        {
+            std::cout << "OpenGL functions succesfully loaded." << std::endl;
+            std::cout << "Version: " + std::string((char*)glGetString(GL_VERSION)) << " - (Major: " + std::to_string(GLVersion.major) + ", Minor: " + std::to_string(GLVersion.minor) << ")" << std::endl;
+            std::cout << "Driver: " + std::string((char*)glGetString(GL_VENDOR)) << std::endl;
+            std::cout << "Total System Memory (RAM): " + SystemMemoryInfo() << std::endl;
+            std::cout << "Processor: " + GetCpuInfo() << std::endl;
+            std::cout << "Renderer: " + std::string((char*)glGetString(GL_RENDERER)) << std::endl;
+            std::cout << "Shading language version: " + std::string((char*)glGetString(GL_SHADING_LANGUAGE_VERSION)) << std::endl;
+        }
+
+        // configure video 
+        // ---------------
+        ShadowInfo value;
+        readVideoConfig("config/videoconfig.txt", value);
+
+        // configure global opengl state
+        // -----------------------------
+        glEnable(GL_DEPTH_TEST);
+        glEnable(GL_MULTISAMPLE);
+
+        // set up render data 
+        // ------------------
+        engineResource(Shaderlist, ModelList, texture, faces);
+        unsigned int cubemapTexture = loadCubemap(faces);
+
+        // configure VAO 
+        // -------------
+        // plane VAO
+        unsigned int planeVBO;
+        glGenVertexArrays(1, &planeVAO);
+        glGenBuffers(1, &planeVBO);
+        glBindVertexArray(planeVAO);
+        glBindBuffer(GL_ARRAY_BUFFER, planeVBO);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(planeVertices), planeVertices, GL_STATIC_DRAW);
+        glEnableVertexAttribArray(0);
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
+        glEnableVertexAttribArray(1);
+        glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
+        glEnableVertexAttribArray(2);
+        glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
+        glBindVertexArray(0);
+        // skybox VAO
+        unsigned int skyboxVAO, skyboxVBO;
+        glGenVertexArrays(1, &skyboxVAO);
+        glGenBuffers(1, &skyboxVBO);
+        glBindVertexArray(skyboxVAO);
+        glBindBuffer(GL_ARRAY_BUFFER, skyboxVBO);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(skyboxVertices), &skyboxVertices, GL_STATIC_DRAW);
+        glEnableVertexAttribArray(0);
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+
+        // configure depth map FBO 
+        // -----------------------
+        unsigned int depthMapFBO;
+        glGenFramebuffers(1, &depthMapFBO);
+        // create depth texture
+        unsigned int depthMaP;
+        glGenTextures(1, &depthMaP);
+        glBindTexture(GL_TEXTURE_2D, depthMaP);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, value.SHADOW_WIDTH, value.SHADOW_HEIGHT, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+        float borderColor[] = { 1.0, 1.0, 1.0, 1.0 };
+        glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
+        // attach depth texture as FBO's depth buffer
+        glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthMaP, 0);
+        glDrawBuffer(GL_NONE);
+        glReadBuffer(GL_NONE);
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+        // shader configuration
+        // --------------------
+        Shaderlist[s_SHADOWMAP].use();
+        Shaderlist[s_SHADOWMAP].setInt("shadowMap", 1);
+        Shaderlist[s_SHADOWMAP].setInt("diffuseTexture", 0);
+
+        Shaderlist[s_DEBUGQUAD].use();
+        Shaderlist[s_DEBUGQUAD].setInt("depthMap", 0);
+
+        Shaderlist[s_NORMALMAP].use();
+        Shaderlist[s_NORMALMAP].setInt("diffuseMap", 0);
+        Shaderlist[s_NORMALMAP].setInt("normalMap", 1);
+        Shaderlist[s_NORMALMAP].setInt("shadowMap", 1);
+
+        Shaderlist[s_SKYBOX].use();
+        Shaderlist[s_SKYBOX].setInt("skybox", 0);
+
+        std::cout << "AMBATUKAM!!!!!!!!!!!!";
+
+        // render loop
+        // -----------
+        while (!glfwWindowShouldClose(window))
+        {
+            // per-frame time logic
+            // --------------------
+            GLfloat currentFrame = static_cast<float>(glfwGetTime());
+            deltaTime = currentFrame - lastFrame;
+            lastFrame = currentFrame;
+
+            GLfloat near_plane = 0.15f, far_plane = 30.5f;
+            //*lightProjection = glm::perspective(glm::radians(90.0f), (GLfloat)value.SHADOW_WIDTH / (GLfloat)value.SHADOW_HEIGHT, near_plane, far_plane); // note that if you use a perspective projection matrix you'll have to change the light position as the current light position isn't enough to reflect the whole scene
+            *lightProjection = glm::ortho(-(GLfloat)value.SHADOW_RANGE, (GLfloat)value.SHADOW_RANGE, -(GLfloat)value.SHADOW_RANGE, (GLfloat)value.SHADOW_RANGE, near_plane, far_plane);
+            *lightView = glm::lookAt(lightPos, glm::vec3(0.0f), glm::vec3(0.0, 1.0, 0.0));
+            *lightSpaceMatrix = *lightProjection * *lightView;
+
+            *projection = glm::perspective(glm::radians(camera.Zoom), (GLfloat)ScreenValue.SCR_WIDTH / (GLfloat)ScreenValue.SCR_HEIGHT, 0.1f, 100.0f);
+            *view = camera.GetViewMatrix();
+
+            // input
+            // -----
+            processInput(window);
+            // change light position over time
+            if (DynamicPos == true)
+            {
+                lightPos.x = sin(glfwGetTime()) * 5.5f;
+                lightPos.z = cos(glfwGetTime()) * 5.5f;
+            }
+            //lightPos.y = 5.0 + cos(glfwGetTime()) * 1.0f ;
+            changeLightPos(window, lightPos);
+            changeLightInfo(window, lightColor, ambientIntensity);
+
+            // render
+            // ------
+            glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+            // 1. render depth of scene to texture (from light's perspective)
+            // --------------------------------------------------------------
+            // render scene from light's point of view
+            Shaderlist[s_DEPTHMAP].use();
+            Shaderlist[s_DEPTHMAP].setMat4("lightSpaceMatrix", *lightSpaceMatrix);
+
+            glViewport(0, 0, value.SHADOW_WIDTH, value.SHADOW_HEIGHT);
+            glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
+            glClear(GL_DEPTH_BUFFER_BIT);
+            renderScene(Shaderlist[s_DEPTHMAP], texture, renderDepth = true);
+            renderModel(Shaderlist[s_DEPTHMAP], ModelList, depthMaP, renderDepth = true);
+            glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+            // reset viewport
+            glViewport(0, 0, ScreenValue.SCR_WIDTH, ScreenValue.SCR_HEIGHT);
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+            // 2. render model normal-mapped   
+            // -----------------------------
+            Shaderlist[s_NORMALMAP].use();
+            Shaderlist[s_NORMALMAP].setMat4("projection", *projection);
+            Shaderlist[s_NORMALMAP].setMat4("view", *view);
+            Shaderlist[s_NORMALMAP].setFloat("ambientIntensity", ambientIntensity);
+            Shaderlist[s_NORMALMAP].setVec3("viewPos", camera.Position);
+            Shaderlist[s_NORMALMAP].setVec3("lightPos", lightPos);
+            Shaderlist[s_NORMALMAP].setVec3("lightColor", lightColor);
+            Shaderlist[s_NORMALMAP].setMat4("lightSpaceMatrix", *lightSpaceMatrix);
+            glActiveTexture(GL_TEXTURE1);
+            glBindTexture(GL_TEXTURE_2D, depthMaP);
+            renderModel(Shaderlist[s_NORMALMAP], ModelList, depthMaP, renderDepth = false);
+
+            // 3. render scene as normal using the generated depth/shadow map  
+            // --------------------------------------------------------------
+            Shaderlist[s_SHADOWMAP].use();
+            Shaderlist[s_SHADOWMAP].setMat4("projection", *projection);
+            Shaderlist[s_SHADOWMAP].setMat4("view", *view);
+            Shaderlist[s_SHADOWMAP].setVec3("viewPos", camera.Position);
+            Shaderlist[s_SHADOWMAP].setFloat("ambientIntensity", ambientIntensity);
+            Shaderlist[s_SHADOWMAP].setVec3("lightPos", lightPos);
+            Shaderlist[s_SHADOWMAP].setVec3("lightColor", lightColor);
+            Shaderlist[s_SHADOWMAP].setMat4("lightSpaceMatrix", *lightSpaceMatrix);
+            glActiveTexture(GL_TEXTURE1);
+            glBindTexture(GL_TEXTURE_2D, depthMaP);
+            renderScene(Shaderlist[s_SHADOWMAP], texture, renderDepth = false);
+
+            // 4. render view model
+            // --------------------
+            //glDepthFunc(GL_ALWAYS);
+            renderViewmodel(Shaderlist[s_MODELDRAW], ModelList, *projection, *view, weaponsNum);
+            //glDepthFunc(GL_LESS);
+
+            // 5. render skybox as last
+            // ------------------------
+            glDepthFunc(GL_LEQUAL);  // change depth function so depth test passes when values are equal to depth buffer's content
+            Shaderlist[s_SKYBOX].use();
+            *view = glm::mat4(glm::mat3(camera.GetViewMatrix())); // remove translation from the view matrix
+            Shaderlist[s_SKYBOX].setMat4("view", *view);
+            Shaderlist[s_SKYBOX].setMat4("projection", *projection);
+            // skybox cube
+            glBindVertexArray(skyboxVAO);
+            glActiveTexture(GL_TEXTURE0);
+            glBindTexture(GL_TEXTURE_CUBE_MAP, cubemapTexture);
+            glDrawArrays(GL_TRIANGLES, 0, 36);
+            glBindVertexArray(0);
+            glDepthFunc(GL_LESS); // set depth function back to default
+
+            // render Depth map to quad for visual debugging
+            // ---------------------------------------------
+            //Shaderlist[s_DEBUGQUAD].use();
+            //Shaderlist[s_DEBUGQUAD].setFloat("near_plane", near_plane);
+            //Shaderlist[s_DEBUGQUAD].setFloat("far_plane", far_plane);
+            //glActiveTexture(GL_TEXTURE0);
+            //glBindTexture(GL_TEXTURE_2D, depthMaP);
+            //renderQuad();
+
+            // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
+            // -------------------------------------------------------------------------------
+            glfwSwapBuffers(window);
+            glfwPollEvents();
+        }
+
+        // optional: de-allocate all resources once they've outlived their purpose:
+        // ------------------------------------------------------------------------
+        glDeleteVertexArrays(1, &planeVAO);
+        glDeleteBuffers(1, &planeVBO);
+        glDeleteVertexArrays(1, &skyboxVAO);
+        glDeleteBuffers(1, &skyboxVBO);
+        delete lightProjection, lightSpaceMatrix, lightView, projection, view;
+
+        glfwTerminate();
+
+        system("pause");
+    }
+
+private:
+
+    void readEnginConfig(const std::string& filename, EngineInfo& value) {
+        std::ifstream file(filename);
+
+        if (file.is_open())
+        {
+            std::string line;
+            if (std::getline(file, line))
+                value.MAJOR_VERSION = std::stoi(line);
+            if (std::getline(file, line))
+                value.MINOR_VERSION = std::stoi(line);
+            if (std::getline(file, line))
+                value.SAMPLES_LEVEL = std::stoi(line);
+            file.close();
+
+            if (value.MAJOR_VERSION < 3 || value.MAJOR_VERSION > 4)
+                value.MAJOR_VERSION = 3;
+
+            if (value.MINOR_VERSION < 3 || value.MINOR_VERSION > 6)
+                value.MINOR_VERSION = 3;
+
+            if (value.SAMPLES_LEVEL < 0 || value.SAMPLES_LEVEL > 16)
+                value.SAMPLES_LEVEL = 4;
+
+        }
+        else
+        {
+            std::cout << "CAN NOT OPEN CONFIG FILE - USING DEFAULT CONFIG.";
+            value.MAJOR_VERSION = 3;
+            value.MINOR_VERSION = 3;
+            value.SAMPLES_LEVEL = 4;
+        }
+    }
+
+    void readVideoConfig(const std::string& filename, ShadowInfo& value) {
+        std::ifstream file(filename);
+        if (file.is_open())
+        {
+            std::string line;
+            if (std::getline(file, line))
+                value.SHADOW_RANGE = std::stoi(line);
+            if (std::getline(file, line))
+                value.SHADOW_WIDTH = std::stoi(line);
+            if (std::getline(file, line))
+                value.SHADOW_HEIGHT = std::stoi(line);
+            file.close();
+
+            if (value.SHADOW_RANGE < 0) {
+                std::cout << "INVLID VALUE - RESTORE TO DEFAULT RANGE (10).";
+                value.SHADOW_RANGE = 10;
+            }
+            if (value.SHADOW_WIDTH < 0 || value.SHADOW_HEIGHT < 0) {
+                std::cout << std::endl << "INVLID VALUE - RESTORE TO DEFAULT (512x512)." << std::endl;
+                value.SHADOW_WIDTH = 512;
+                value.SHADOW_HEIGHT = 512;
+            }
+
+            std::cout << "SHADOW RANGE: " << value.SHADOW_RANGE;
+            std::cout << std::endl << "SHADOW MAP RESOLUTION: " << value.SHADOW_WIDTH << "x" << value.SHADOW_HEIGHT << std::endl;
+        }
+        else
+        {
+            std::cout << "CAN NOT OPEN CONFIG FILE - USING DEFAULT CONFIG.";
+            value.SHADOW_RANGE = 10;
             value.SHADOW_WIDTH = 512;
             value.SHADOW_HEIGHT = 512;
         }
-
-        std::cout << "SHADOW RANGE: " << value.SHADOW_RANGE;
-        std::cout << std::endl << "SHADOW MAP RESOLUTION: " << value.SHADOW_WIDTH << "x" << value.SHADOW_HEIGHT << std::endl;
     }
-    else 
+
+    void engineResource(std::vector <Shader>& Shaderlist, std::vector <Model>& ModelList, std::vector <unsigned int>& Texture, std::vector<std::string>& faces)
     {
-        std::cout << "CAN NOT OPEN CONFIG FILE - USING DEFAULT CONFIG.";
-        value.SHADOW_RANGE = 10;
-        value.SHADOW_WIDTH = 512;
-        value.SHADOW_HEIGHT = 512;
+        // build and compile shaders
+        // -------------------------
+        std::cout << std::endl;
+        Shaderlist.push_back(Shader("resources/shaders/shadow_mapping.vs", "resources/shaders/shadow_mapping.fs"));
+        Shaderlist.push_back(Shader("resources/shaders/shadow_mapping_depth.vs", "resources/shaders/shadow_mapping_depth.fs"));
+        Shaderlist.push_back(Shader("resources/shaders/debug_quad.vs", "resources/shaders/debug_quad_depth.fs"));
+        Shaderlist.push_back(Shader("resources/shaders/skybox.vs", "resources/shaders/skybox.fs"));
+        Shaderlist.push_back(Shader("resources/shaders/normal_mapping.vs", "resources/shaders/normal_mapping.fs"));
+        Shaderlist.push_back(Shader("resources/shaders/model_loading.vs", "resources/shaders/model_loading.fs"));
+
+        // load models
+        // ------------
+        // tell stb_image.h to flip loaded texture's on the y-axis (before loading model).
+        std::cout << std::endl;
+        stbi_set_flip_vertically_on_load(true);
+        ModelList.push_back(Model("resources/objects/backpack/backpack.obj"));
+        stbi_set_flip_vertically_on_load(false);
+        ModelList.push_back(Model("resources/objects/cottage/cottage.obj"));
+        ModelList.push_back(Model("resources/objects/birch_tree/birch_tree.obj"));
+        ModelList.push_back(Model("resources/objects/tree/tree.obj"));
+        ModelList.push_back(Model("resources/objects/rock/rock.obj"));
+        ModelList.push_back(Model("resources/objects/cyborg/cyborg.obj"));
+        ModelList.push_back(Model("resources/objects/planet/planet.obj"));
+        ModelList.push_back(Model("resources/objects/nanosuit/nanosuit.obj"));
+        ModelList.push_back(Model("resources/objects/sponza/sponza.obj"));
+        ModelList.push_back(Model("resources/objects/woodentower/woodentower.obj"));
+        ModelList.push_back(Model("resources/objects/container/container.obj"));
+        ModelList.push_back(Model("resources/objects/weapons/ak47.obj"));
+        ModelList.push_back(Model("resources/objects/weapons/StingSword.obj"));
+
+        // load textures
+        // -------------
+        std::cout << std::endl;
+        Texture.push_back(loadTexture("resources/textures/dirt.bmp"));
+        Texture.push_back(loadTexture("resources/textures/dirt3.bmp"));
+        Texture.push_back(loadTexture("resources/textures/ambatukam.bmp"));
+        Texture.push_back(loadTexture("resources/textures/metal.bmp"));
+        Texture.push_back(loadTexture("resources/textures/fat.bmp"));
+
+        // load sky box textures
+        // ---------------------
+        std::cout << std::endl;
+        std::vector <std::string> get
+        {
+            "resources/textures/skybox/right.jpg",
+            "resources/textures/skybox/left.jpg",
+            "resources/textures/skybox/top.jpg",
+            "resources/textures/skybox/bottom.jpg",
+            "resources/textures/skybox/front.jpg",
+            "resources/textures/skybox/back.jpg"
+        };
+        faces = get;
     }
-}
-
-void engineResource(std::vector <Shader>& Shaderlist, std::vector <Model>& ModelList, std::vector <unsigned int>& Texture, std::vector<std::string>& faces )
-{
-    // build and compile shaders
-    // -------------------------
-    std::cout << std::endl;
-    Shaderlist.push_back(Shader("resources/shaders/shadow_mapping.vs", "resources/shaders/shadow_mapping.fs"));
-    Shaderlist.push_back(Shader("resources/shaders/shadow_mapping_depth.vs", "resources/shaders/shadow_mapping_depth.fs"));
-    Shaderlist.push_back(Shader("resources/shaders/debug_quad.vs", "resources/shaders/debug_quad_depth.fs"));
-    Shaderlist.push_back(Shader("resources/shaders/skybox.vs", "resources/shaders/skybox.fs"));
-    Shaderlist.push_back(Shader("resources/shaders/normal_mapping.vs", "resources/shaders/normal_mapping.fs"));
-    Shaderlist.push_back(Shader("resources/shaders/model_loading.vs", "resources/shaders/model_loading.fs"));
-
-    // load models
-    // ------------
-    // tell stb_image.h to flip loaded texture's on the y-axis (before loading model).
-    std::cout << std::endl;
-    stbi_set_flip_vertically_on_load(true);
-    ModelList.push_back(Model("resources/objects/backpack/backpack.obj"));
-    stbi_set_flip_vertically_on_load(false);
-    ModelList.push_back(Model("resources/objects/cottage/cottage.obj"));
-    ModelList.push_back(Model("resources/objects/birch_tree/birch_tree.obj"));
-    ModelList.push_back(Model("resources/objects/tree/tree.obj"));
-    ModelList.push_back(Model("resources/objects/rock/rock.obj"));
-    ModelList.push_back(Model("resources/objects/cyborg/cyborg.obj"));
-    ModelList.push_back(Model("resources/objects/planet/planet.obj"));
-    ModelList.push_back(Model("resources/objects/nanosuit/nanosuit.obj"));
-    ModelList.push_back(Model("resources/objects/sponza/sponza.obj"));
-    ModelList.push_back(Model("resources/objects/woodentower/woodentower.obj"));
-    ModelList.push_back(Model("resources/objects/container/container.obj"));
-    ModelList.push_back(Model("resources/objects/weapons/ak47.obj"));
-    ModelList.push_back(Model("resources/objects/weapons/StingSword.obj"));
-
-    // load textures
-    // -------------
-    std::cout << std::endl;
-    Texture.push_back(loadTexture("resources/textures/dirt.bmp"));
-    Texture.push_back(loadTexture("resources/textures/dirt3.bmp"));
-    Texture.push_back(loadTexture("resources/textures/ambatukam.bmp"));
-    Texture.push_back(loadTexture("resources/textures/metal.bmp"));
-    Texture.push_back(loadTexture("resources/textures/fat.bmp"));
-
-    // load sky box textures
-    // ---------------------
-    std::cout << std::endl;
-    std::vector <std::string> get
-    {
-        "resources/textures/skybox/right.jpg",
-        "resources/textures/skybox/left.jpg",
-        "resources/textures/skybox/top.jpg",
-        "resources/textures/skybox/bottom.jpg",
-        "resources/textures/skybox/front.jpg",
-        "resources/textures/skybox/back.jpg"
-    };
-    faces = get;
-}
+};
 
 #endif

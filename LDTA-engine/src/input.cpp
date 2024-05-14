@@ -17,6 +17,7 @@ WindowsPosition WindowsPos;
 
 // camera
 Camera camera(glm::vec3(-3.0f, 3.0f, 3.0f));
+Camera viewmodel(glm::vec3(-3.0f, 3.0f, 3.0f));
 float lastX = (float)ScreenValue.SCR_WIDTH / 2.0;
 float lastY = (float)ScreenValue.SCR_HEIGHT / 2.0;
 bool firstMouse = true;
