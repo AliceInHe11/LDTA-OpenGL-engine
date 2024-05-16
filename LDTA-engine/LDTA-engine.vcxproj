@@ -108,7 +108,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>src;include\stb;include\glm;include\GLFW;include\glad;include\GL;include\assimp;include\KHR;include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>include\FMOD;src;include\stb;include\glm;include\GLFW;include\glad;include\GL;include\assimp;include\KHR;include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
     </ClCompile>
@@ -116,7 +116,7 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>OpenGL32.Lib;glfw3.lib;assimp-vc143-mt.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>OpenGL32.Lib;glfw3.lib;assimp-vc143-mt.lib;fmod_vc.lib;fmodstudio_vc.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -140,6 +140,7 @@
     <ClCompile Include="src\engine.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="include\GL\audio.h" />
     <ClInclude Include="include\GL\camera.h" />
     <ClInclude Include="include\GL\image.h" />
     <ClInclude Include="include\GL\mesh.h" />
@@ -150,6 +151,7 @@
     <ClInclude Include="src\engine.h" />
     <ClInclude Include="src\input.cpp" />
     <ClInclude Include="src\render.cpp" />
+    <ClInclude Include="src\SoundInfo.h" />
     <ClInclude Include="src\texture.cpp" />
   </ItemGroup>
   <ItemGroup>

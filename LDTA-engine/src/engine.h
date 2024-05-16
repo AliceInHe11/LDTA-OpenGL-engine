@@ -21,6 +21,8 @@
 #include <camera.h>
 #include <model.h>
 #include <shader.h>
+#include <audio.h>
+#include <SoundInfo.h>
 
 #include "texture.cpp"
 #include "render.cpp"
@@ -102,24 +104,11 @@ float skyboxVertices[] = {
 
 // lighting info
 // -------------
-float ambientIntensity = 0.75f;
 glm::vec3 lightColor(0.75f, 0.75f, 0.75f);
-bool renderDepth;
-glm::mat4* lightProjection = new glm::mat4;
-glm::mat4* lightView = new glm::mat4;
-glm::mat4* lightSpaceMatrix = new glm::mat4;
 
-// view info
+// sound info
 // ----------
-glm::mat4* projection = new glm::mat4;
-glm::mat4* view = new glm::mat4;
-
-// render info
-// -----------
-std::vector <unsigned int> texture;
-std::vector <std::string> faces;
-std::vector <Shader> Shaderlist;
-std::vector <Model> ModelList;
+SoundInfo soundLoop2D("resources/audio/bgm_track2_loop.mp3", 0.025);
 
 // define shader numners
 // ---------------------
@@ -298,6 +287,13 @@ public:
         Shaderlist[s_SKYBOX].use();
         Shaderlist[s_SKYBOX].setInt("skybox", 0);
 
+        // Initialize Audio Engine and Load sounds
+        // ---------------------------------------
+        audio.init();
+        audio.loadSound(soundLoop2D);
+        // Play looping music to start scene
+        audio.playSound(soundLoop2D);
+
         std::cout << "AMBATUKAM!!!!!!!!!!!!";
 
         // render loop
@@ -428,10 +424,30 @@ public:
 
         glfwTerminate();
 
+        audio.stopSound(soundLoop2D);
+
         system("pause");
+        return 0;
     }
 
 private:
+    float ambientIntensity = 0.75f;
+    bool renderDepth;
+    glm::mat4* lightProjection = new glm::mat4;
+    glm::mat4* lightView = new glm::mat4;
+    glm::mat4* lightSpaceMatrix = new glm::mat4;
+    glm::mat4* projection = new glm::mat4;
+    glm::mat4* view = new glm::mat4;
+
+    // render info
+    // -----------
+    std::vector <unsigned int> texture;
+    std::vector <std::string> faces;
+    std::vector <Shader> Shaderlist;
+    std::vector <Model> ModelList;
+
+    // audio
+    AudioEngine audio;
 
     void readEnginConfig(const std::string& filename, EngineInfo& value) {
         std::ifstream file(filename);

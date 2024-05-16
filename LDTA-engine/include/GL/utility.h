@@ -24,10 +24,10 @@
 
 void SET_COLOR(int color)
 {
-    if (color < 0 || color > 15)
+    if (color < 0 || color > 15 )
         color = 7;
 
-    DWORD wColor;
+    WORD wColor;
     HANDLE hStdOut = GetStdHandle(STD_OUTPUT_HANDLE);
     CONSOLE_SCREEN_BUFFER_INFO csbi;
 
@@ -48,17 +48,16 @@ std::string GetCpuInfo()
     std::array<char, 64> charBuffer = {};
 
     // The information you wanna query __cpuid for.
-    // https://learn.microsoft.com/en-us/cpp/intrinsics/cpuid-cpuidex?view=vs-2019constexpr 
-    std::array<int, 3> functionIds = 
+    std::array<int, 4> functionIds = 
     {
         // Manufacturer
-        //  EX: "Intel(R) Core(TM"
+        // EX: "Intel(R) Core(TM"
         0x8000'0002,
         // Model
-        //  EX: ") i7-8700K CPU @"
+        // EX: ") i7-8700K CPU @"
         0x8000'0003,
         // Clockspeed
-        //  EX: " 3.70GHz"
+        // EX: " 3.70GHz"
         0x8000'0004
     };
 
@@ -75,6 +74,7 @@ std::string GetCpuInfo()
         // Copy that data into a std::string
         cpu += std::string(charBuffer.data());
     }
+
     SYSTEM_INFO sysInfo;
     GetSystemInfo(&sysInfo);
 
