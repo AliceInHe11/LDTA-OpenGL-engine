@@ -32,6 +32,10 @@ bool DynamicPos = true;
 
 // weapon switch
 unsigned int weaponsNum = 0;
+int weaponsSound = -1;
+
+// player movement
+int playerMovement = -1;
 
 void setWindowPosition(ScreenInfo ScreenValue, WindowsPosition &WindowsPos) {
     const GLFWvidmode* mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
@@ -192,6 +196,30 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
     else
     if (key == GLFW_KEY_3 && action == GLFW_PRESS)
         weaponsNum = 2;
+
+    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS || glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS ||
+        glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS || glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+
+        playerMovement = 1;
+    else
+        playerMovement = -1;
+}
+
+void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
+{
+    if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS)
+    {
+        if (weaponsNum == 0) 
+            weaponsSound = 0;
+        else
+        if (weaponsNum == 1)
+            weaponsSound = 1;
+        else
+        if (weaponsNum == 2)
+            weaponsSound = 2;
+    }
+    else
+        weaponsSound = -1;
 }
 
 void changeLightPos(GLFWwindow* window, glm::vec3& lightPos) {

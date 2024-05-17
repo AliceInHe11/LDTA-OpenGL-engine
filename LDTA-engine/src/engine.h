@@ -22,7 +22,7 @@
 #include <model.h>
 #include <shader.h>
 #include <audio.h>
-#include <SoundInfo.h>
+#include <soundinfo.h>
 
 #include "texture.cpp"
 #include "render.cpp"
@@ -106,10 +106,6 @@ float skyboxVertices[] = {
 // -------------
 glm::vec3 lightColor(0.75f, 0.75f, 0.75f);
 
-// sound info
-// ----------
-SoundInfo soundLoop2D("resources/audio/bgm_track2_loop.mp3", 0.025);
-
 // define shader numners
 // ---------------------
 #define s_SHADOWMAP     0
@@ -129,7 +125,7 @@ public:
         if (!glfwInit())
         {
             SET_COLOR(RED);
-            std::cout << "Failed to initializes the GLFW libary !";
+            std::cout << "Failed to initializes the GLFW libary !\n";
             SET_COLOR(WHITE);
             system("pause");
             return -1;
@@ -142,10 +138,6 @@ public:
         glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, engineConfig.MINOR_VERSION);
         glfwWindowHint(GLFW_SAMPLES, engineConfig.SAMPLES_LEVEL);
         glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-
-#ifdef __APPLE__
-        glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-#endif
 
         // glfw window creation
         // --------------------
@@ -164,7 +156,7 @@ public:
         if (!window)
         {
             SET_COLOR(RED);
-            std::cout << "Failed to create GLFW window !" << std::endl;
+            std::cout << "Failed to create GLFW window !\n" << std::endl;
             SET_COLOR(WHITE);
             glfwTerminate();
             system("pause");
@@ -181,6 +173,7 @@ public:
         glfwSetCursorPosCallback(window, mouse_callback);
         glfwSetScrollCallback(window, scroll_callback);
         glfwSetKeyCallback(window, key_callback);
+        glfwSetMouseButtonCallback(window, mouse_button_callback);
 
         // tell GLFW to capture the mouse
         glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
@@ -190,7 +183,7 @@ public:
         if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
         {
             SET_COLOR(RED);
-            std::cout << "Failed to initialize GLAD" << std::endl;
+            std::cout << "Failed to initialize GLAD !\n" << std::endl;
             SET_COLOR(WHITE);
             glfwTerminate();
             system("pause");
@@ -219,8 +212,8 @@ public:
 
         // set up render data 
         // ------------------
-        engineResource(Shaderlist, ModelList, texture, faces);
-        unsigned int cubemapTexture = loadCubemap(faces);
+        unsigned int cubemapTexture;
+        engineResource(Shaderlist, ModelList, SoundList, texture, cubemapTexture, audio);
 
         // configure VAO 
         // -------------
@@ -287,14 +280,10 @@ public:
         Shaderlist[s_SKYBOX].use();
         Shaderlist[s_SKYBOX].setInt("skybox", 0);
 
-        // Initialize Audio Engine and Load sounds
-        // ---------------------------------------
-        audio.init();
-        audio.loadSound(soundLoop2D);
         // Play looping music to start scene
-        audio.playSound(soundLoop2D);
+        audio.playSound(SoundList[0]);
 
-        std::cout << "AMBATUKAM!!!!!!!!!!!!";
+        std::cout << "AMBATUKAM!!!!!!!!!!!!\n";
 
         // render loop
         // -----------
@@ -399,6 +388,10 @@ public:
             glBindVertexArray(0);
             glDepthFunc(GL_LESS); // set depth function back to default
 
+            // 6. play sound effect (gunshot,footstep,...)
+            // -------------------------------------------
+            playSoundEffect();
+
             // render Depth map to quad for visual debugging
             // ---------------------------------------------
             //Shaderlist[s_DEBUGQUAD].use();
@@ -423,14 +416,17 @@ public:
         delete lightProjection, lightSpaceMatrix, lightView, projection, view;
 
         glfwTerminate();
-
-        audio.stopSound(soundLoop2D);
-
+        for (int i = 0; i < SoundList.size(); i++)
+            if(audio.soundIsPlaying(SoundList[i]))
+               audio.stopSound(SoundList[i]);
+        
         system("pause");
         return 0;
     }
 
 private:
+    // render info
+    // -----------
     float ambientIntensity = 0.75f;
     bool renderDepth;
     glm::mat4* lightProjection = new glm::mat4;
@@ -438,16 +434,42 @@ private:
     glm::mat4* lightSpaceMatrix = new glm::mat4;
     glm::mat4* projection = new glm::mat4;
     glm::mat4* view = new glm::mat4;
-
-    // render info
-    // -----------
+    GLfloat countdown1 = 0, countdown2 = 0, moveCountDown = 0;
+    // resource info
+    // -------------
     std::vector <unsigned int> texture;
     std::vector <std::string> faces;
     std::vector <Shader> Shaderlist;
     std::vector <Model> ModelList;
+    std::vector <SoundInfo> SoundList;
 
     // audio
+    // -----
     AudioEngine audio;
+
+    void playSoundEffect()
+    {
+        if (playerMovement == 1 && (moveCountDown == 0 || lastFrame - moveCountDown >= 0.3f))
+        {
+            audio.playSound(SoundList[4]);
+            audio.playSound(SoundList[5]);
+            audio.playSound(SoundList[6]);
+            audio.playSound(SoundList[7]);
+            moveCountDown = lastFrame;
+        }
+
+        if (weaponsSound == 0 && (countdown1 == 0 || lastFrame - countdown1 >= 0.1f))
+        {
+            audio.playSound(SoundList[2]);
+            countdown1 = lastFrame;
+        }
+        else
+        if (weaponsSound == 1 && (countdown2 == 0 || lastFrame - countdown2 >= 2.0f))
+        {
+             audio.playSound(SoundList[3]);
+             countdown2 = lastFrame;
+        }
+    }
 
     void readEnginConfig(const std::string& filename, EngineInfo& value) {
         std::ifstream file(filename);
@@ -517,7 +539,7 @@ private:
         }
     }
 
-    void engineResource(std::vector <Shader>& Shaderlist, std::vector <Model>& ModelList, std::vector <unsigned int>& Texture, std::vector<std::string>& faces)
+    void engineResource(std::vector <Shader>& Shaderlist, std::vector <Model>& ModelList, std::vector <SoundInfo>& SoundList, std::vector <unsigned int>& Texture, unsigned int & cubemapTexture, AudioEngine& audio)
     {
         // build and compile shaders
         // -------------------------
@@ -561,7 +583,7 @@ private:
         // load sky box textures
         // ---------------------
         std::cout << std::endl;
-        std::vector <std::string> get
+        std::vector <std::string> faces
         {
             "resources/textures/skybox/right.jpg",
             "resources/textures/skybox/left.jpg",
@@ -570,7 +592,24 @@ private:
             "resources/textures/skybox/front.jpg",
             "resources/textures/skybox/back.jpg"
         };
-        faces = get;
+        cubemapTexture = loadCubemap(faces);
+
+        // Initialize Audio Engine and Load sounds
+        // ---------------------------------------
+        // load sound 
+        SoundList.push_back(SoundInfo("resources/audio/bgm_track2_loop.mp3", 0.025f, 2.0f, SOUND_LOOP));
+        SoundList.push_back(SoundInfo("resources/audio/bgm_track1_loop.mp3", 0.025f, 2.0f, SOUND_LOOP));
+        SoundList.push_back(SoundInfo("resources/audio/AK47_Fire1.wav", 0.0075f, 2.0f, SOUND_ONE_SHOT));
+        SoundList.push_back(SoundInfo("resources/audio/D.mp3", 0.075f, 9.0f, SOUND_ONE_SHOT));
+        SoundList.push_back(SoundInfo("resources/audio/player_step_1.wav", 0.05f, 3.0f, SOUND_ONE_SHOT));
+        SoundList.push_back(SoundInfo("resources/audio/player_step_2.wav", 0.05f, 3.0f, SOUND_ONE_SHOT));
+        SoundList.push_back(SoundInfo("resources/audio/player_step_3.wav", 0.05f, 3.0f, SOUND_ONE_SHOT));
+        SoundList.push_back(SoundInfo("resources/audio/player_step_4.wav", 0.05f, 3.0f, SOUND_ONE_SHOT));
+        // Initialize audio engine
+        std::cout << std::endl;
+        audio.init();
+        for(int i=0;i<SoundList.size();i++)
+            audio.loadSound(SoundList[i]);
     }
 };
 

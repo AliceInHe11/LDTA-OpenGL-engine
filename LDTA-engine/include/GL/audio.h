@@ -9,7 +9,7 @@
 #include <vector>
 #include <list>
 #include <map>
-#include "SoundInfo.h"
+#include "soundinfo.h"
 
 /**
  * Error Handling Function for FMOD Errors
@@ -81,7 +81,9 @@ public:
     void loadSound(SoundInfo soundInfo)
     {
         if (!soundInfo.isLoaded()) {
+            SET_COLOR(LIGHTGREEN);
             std::cout << "Audio Engine: Loading Sound from file " << soundInfo.getFilePath() << '\n';
+            SET_COLOR(WHITE);
             FMOD::Sound* sound;
             ERRCHECK(lowLevelSystem->createSound(soundInfo.getFilePath(), soundInfo.is3D() ? FMOD_3D : FMOD_2D, 0, &sound));
             ERRCHECK(sound->setMode(soundInfo.isLoop() ? FMOD_LOOP_NORMAL : FMOD_LOOP_OFF));
@@ -92,8 +94,12 @@ public:
             //soundInfo.setMSLength(msLength);
             soundInfo.setLoaded(SOUND_LOADED);
         }
-        else
+        else 
+        {
+            SET_COLOR(RED);
             std::cout << "Audio Engine: Sound File was already loaded!\n";
+            SET_COLOR(WHITE);
+        }
     }
 
     /**
@@ -126,9 +132,12 @@ public:
             ERRCHECK(channel->setPaused(false));
 
         }
-        else
+        else 
+        {
+            SET_COLOR(RED);
             std::cout << "Audio Engine: Can't play, sound was not loaded yet from " << soundInfo.getFilePath() << '\n';
-
+            SET_COLOR(WHITE);
+        }
     }
     
     /**
@@ -141,7 +150,11 @@ public:
             loopsPlaying.erase(soundInfo.getUniqueID());
         }
         else
+        {
+            SET_COLOR(RED);
             std::cout << "Audio Engine: Can't stop a looping sound that's not playing!\n";
+            SET_COLOR(WHITE);
+        }
     }
 
     /**
@@ -174,7 +187,11 @@ public:
             soundInfo.setVolume(newVolume); // update the SoundInfo's volume
         }
         else
+        {
+            SET_COLOR(RED);
             std::cout << "AudioEngine: Can't update sound loop volume! (It isn't playing or might not be loaded)\n";
+            SET_COLOR(WHITE);
+        }
     }
 
    
@@ -189,7 +206,11 @@ public:
         if (soundIsPlaying(soundInfo))
             set3dChannelPosition(soundInfo, loopsPlaying[soundInfo.getUniqueID()]);
         else
+        {
+            SET_COLOR(RED);
             std::cout << "Audio Engine: Can't update sound position!\n";
+            SET_COLOR(WHITE);
+        }
 
     }
       
