@@ -4,6 +4,7 @@
 #include <windows.h>
 #include <intrin.h> 
 #include <array>
+#include <glad.h>
 
 #define BLACK       0
 #define BLUE        1
@@ -48,7 +49,7 @@ std::string GetCpuInfo()
     std::array<char, 64> charBuffer = {};
 
     // The information you wanna query __cpuid for.
-    std::array<int, 4> functionIds = 
+    std::array<int, 3> functionIds = 
     {
         // Manufacturer
         // EX: "Intel(R) Core(TM"
@@ -81,13 +82,22 @@ std::string GetCpuInfo()
     return cpu + " (" + std::to_string(sysInfo.dwNumberOfProcessors) + " CPUs)";
 }
 
-std::string SystemMemoryInfo() {
+std::string SystemMemoryInfo() 
+{
 
     MEMORYSTATUSEX statex;
     statex.dwLength = sizeof(statex);
     GlobalMemoryStatusEx(&statex);
 
     return std::to_string((statex.ullTotalPhys / 1024) / 1024) + " MB";
+}
+
+std::string DisplayMemory()
+{
+    GLint totalAvailableMemory;
+    glGetIntegerv(GL_GPU_MEMORY_INFO_TOTAL_AVAILABLE_MEMORY_NVX, &totalAvailableMemory);
+
+    return std::to_string(totalAvailableMemory / 1024) + " MB";
 }
 
 #endif

@@ -197,6 +197,7 @@ public:
             std::cout << "Total System Memory (RAM): " + SystemMemoryInfo() << std::endl;
             std::cout << "Processor: " + GetCpuInfo() << std::endl;
             std::cout << "Renderer: " + std::string((char*)glGetString(GL_RENDERER)) << std::endl;
+            std::cout << "Display Memory (VRAM): " + DisplayMemory() << std::endl;
             std::cout << "Shading language version: " + std::string((char*)glGetString(GL_SHADING_LANGUAGE_VERSION)) << std::endl;
         }
 
