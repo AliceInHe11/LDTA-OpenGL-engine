@@ -50,20 +50,18 @@ D:\3d\LDTA-engine\LDTA-engine\src\input.cpp(137,54): warning C4244: 'argument': 
 D:\3d\LDTA-engine\LDTA-engine\src\input.cpp(139,56): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
   (compiling source file 'src/engine.cpp')
   
-D:\3d\LDTA-engine\LDTA-engine\src\engine.h(314,49): warning C4244: '=': conversion from 'double' to 'T', possible loss of data
-D:\3d\LDTA-engine\LDTA-engine\src\engine.h(314,49): warning C4244:         with
-D:\3d\LDTA-engine\LDTA-engine\src\engine.h(314,49): warning C4244:         [
-D:\3d\LDTA-engine\LDTA-engine\src\engine.h(314,49): warning C4244:             T=float
-D:\3d\LDTA-engine\LDTA-engine\src\engine.h(314,49): warning C4244:         ]
+D:\3d\LDTA-engine\LDTA-engine\src\engine.h(254,49): warning C4244: '=': conversion from 'double' to 'T', possible loss of data
+D:\3d\LDTA-engine\LDTA-engine\src\engine.h(254,49): warning C4244:         with
+D:\3d\LDTA-engine\LDTA-engine\src\engine.h(254,49): warning C4244:         [
+D:\3d\LDTA-engine\LDTA-engine\src\engine.h(254,49): warning C4244:             T=float
+D:\3d\LDTA-engine\LDTA-engine\src\engine.h(254,49): warning C4244:         ]
   (compiling source file 'src/engine.cpp')
   
-D:\3d\LDTA-engine\LDTA-engine\src\engine.h(315,49): warning C4244: '=': conversion from 'double' to 'T', possible loss of data
-D:\3d\LDTA-engine\LDTA-engine\src\engine.h(315,49): warning C4244:         with
-D:\3d\LDTA-engine\LDTA-engine\src\engine.h(315,49): warning C4244:         [
-D:\3d\LDTA-engine\LDTA-engine\src\engine.h(315,49): warning C4244:             T=float
-D:\3d\LDTA-engine\LDTA-engine\src\engine.h(315,49): warning C4244:         ]
+D:\3d\LDTA-engine\LDTA-engine\src\engine.h(255,49): warning C4244: '=': conversion from 'double' to 'T', possible loss of data
+D:\3d\LDTA-engine\LDTA-engine\src\engine.h(255,49): warning C4244:         with
+D:\3d\LDTA-engine\LDTA-engine\src\engine.h(255,49): warning C4244:         [
+D:\3d\LDTA-engine\LDTA-engine\src\engine.h(255,49): warning C4244:             T=float
+D:\3d\LDTA-engine\LDTA-engine\src\engine.h(255,49): warning C4244:         ]
   (compiling source file 'src/engine.cpp')
   
-     Creating library D:\3d\LDTA-engine\Build\x64\LDTA-engine.lib and object D:\3d\LDTA-engine\Build\x64\LDTA-engine.exp
-LINK : warning LNK4098: defaultlib 'MSVCRT' conflicts with use of other libs; use /NODEFAULTLIB:library
   LDTA-engine.vcxproj -> D:\3d\LDTA-engine\Build\x64\LDTA-engine.exe

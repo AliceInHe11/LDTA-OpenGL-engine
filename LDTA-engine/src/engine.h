@@ -42,66 +42,6 @@ struct EngineInfo
     int SAMPLES_LEVEL;
 };
 
-// set up vertex data (and buffer(s)) and configure vertex attributes
-   // ------------------------------------------------------------------
-float planeVertices[] = {
-    // positions           // normals         // texcoords
-    25.0f, -0.5f,  25.0f,  0.0f, 1.0f, 0.0f,  50.0f,  0.0f,
-   -25.0f, -0.5f,  25.0f,  0.0f, 1.0f, 0.0f,   0.0f,  0.0f,
-   -25.0f, -0.5f, -25.0f,  0.0f, 1.0f, 0.0f,   0.0f, 50.0f,
-
-    25.0f, -0.5f,  25.0f,  0.0f, 1.0f, 0.0f,  50.0f,  0.0f,
-   -25.0f, -0.5f, -25.0f,  0.0f, 1.0f, 0.0f,   0.0f, 50.0f,
-    25.0f, -0.5f, -25.0f,  0.0f, 1.0f, 0.0f,  50.0f, 50.0f
-};
-
-// set up sky vertex data 
-// ----------------------
-float skyboxVertices[] = {
-    // positions          
-    -1.0f,  1.0f, -1.0f,
-    -1.0f, -1.0f, -1.0f,
-     1.0f, -1.0f, -1.0f,
-     1.0f, -1.0f, -1.0f,
-     1.0f,  1.0f, -1.0f,
-    -1.0f,  1.0f, -1.0f,
-
-    -1.0f, -1.0f,  1.0f,
-    -1.0f, -1.0f, -1.0f,
-    -1.0f,  1.0f, -1.0f,
-    -1.0f,  1.0f, -1.0f,
-    -1.0f,  1.0f,  1.0f,
-    -1.0f, -1.0f,  1.0f,
-
-     1.0f, -1.0f, -1.0f,
-     1.0f, -1.0f,  1.0f,
-     1.0f,  1.0f,  1.0f,
-     1.0f,  1.0f,  1.0f,
-     1.0f,  1.0f, -1.0f,
-     1.0f, -1.0f, -1.0f,
-
-    -1.0f, -1.0f,  1.0f,
-    -1.0f,  1.0f,  1.0f,
-     1.0f,  1.0f,  1.0f,
-     1.0f,  1.0f,  1.0f,
-     1.0f, -1.0f,  1.0f,
-    -1.0f, -1.0f,  1.0f,
-
-    -1.0f,  1.0f, -1.0f,
-     1.0f,  1.0f, -1.0f,
-     1.0f,  1.0f,  1.0f,
-     1.0f,  1.0f,  1.0f,
-    -1.0f,  1.0f,  1.0f,
-    -1.0f,  1.0f, -1.0f,
-
-    -1.0f, -1.0f, -1.0f,
-    -1.0f, -1.0f,  1.0f,
-     1.0f, -1.0f, -1.0f,
-     1.0f, -1.0f, -1.0f,
-    -1.0f, -1.0f,  1.0f,
-     1.0f, -1.0f,  1.0f
-};
-
 // lighting info
 // -------------
 glm::vec3 lightColor(0.75f, 0.75f, 0.75f);
@@ -378,9 +318,13 @@ public:
             // ------------------------
             glDepthFunc(GL_LEQUAL);  // change depth function so depth test passes when values are equal to depth buffer's content
             Shaderlist[s_SKYBOX].use();
+            glm:: mat4 model = glm::mat4(1.0f);
+            model = glm::scale(model, glm::vec3(0.5f));
+            model = glm::rotate(model, glm::radians((float)glfwGetTime() * 4.0f), glm::normalize(glm::vec3(0.25f, 0.0f, 0.5f)));
             *view = glm::mat4(glm::mat3(camera.GetViewMatrix())); // remove translation from the view matrix
             Shaderlist[s_SKYBOX].setMat4("view", *view);
             Shaderlist[s_SKYBOX].setMat4("projection", *projection);
+            Shaderlist[s_SKYBOX].setMat4("model", model);
             // skybox cube
             glBindVertexArray(skyboxVAO);
             glActiveTexture(GL_TEXTURE0);
@@ -426,6 +370,67 @@ public:
     }
 
 private:
+    // set up vertex data (and buffer(s)) and configure vertex attributes
+    // ------------------------------------------------------------------
+    float planeVertices[48] = 
+    {
+        // positions           // normals         // texcoords
+        25.0f, -0.5f,  25.0f,  0.0f, 1.0f, 0.0f,  50.0f,  0.0f,
+       -25.0f, -0.5f,  25.0f,  0.0f, 1.0f, 0.0f,   0.0f,  0.0f,
+       -25.0f, -0.5f, -25.0f,  0.0f, 1.0f, 0.0f,   0.0f, 50.0f,
+
+        25.0f, -0.5f,  25.0f,  0.0f, 1.0f, 0.0f,  50.0f,  0.0f,
+       -25.0f, -0.5f, -25.0f,  0.0f, 1.0f, 0.0f,   0.0f, 50.0f,
+        25.0f, -0.5f, -25.0f,  0.0f, 1.0f, 0.0f,  50.0f, 50.0f
+    };
+    // set up sky vertex data 
+    // ----------------------
+    float skyboxVertices[108] = 
+    {
+        // positions          
+        -1.0f,  1.0f, -1.0f,
+        -1.0f, -1.0f, -1.0f,
+         1.0f, -1.0f, -1.0f,
+         1.0f, -1.0f, -1.0f,
+         1.0f,  1.0f, -1.0f,
+        -1.0f,  1.0f, -1.0f,
+
+        -1.0f, -1.0f,  1.0f,
+        -1.0f, -1.0f, -1.0f,
+        -1.0f,  1.0f, -1.0f,
+        -1.0f,  1.0f, -1.0f,
+        -1.0f,  1.0f,  1.0f,
+        -1.0f, -1.0f,  1.0f,
+
+         1.0f, -1.0f, -1.0f,
+         1.0f, -1.0f,  1.0f,
+         1.0f,  1.0f,  1.0f,
+         1.0f,  1.0f,  1.0f,
+         1.0f,  1.0f, -1.0f,
+         1.0f, -1.0f, -1.0f,
+
+        -1.0f, -1.0f,  1.0f,
+        -1.0f,  1.0f,  1.0f,
+         1.0f,  1.0f,  1.0f,
+         1.0f,  1.0f,  1.0f,
+         1.0f, -1.0f,  1.0f,
+        -1.0f, -1.0f,  1.0f,
+
+        -1.0f,  1.0f, -1.0f,
+         1.0f,  1.0f, -1.0f,
+         1.0f,  1.0f,  1.0f,
+         1.0f,  1.0f,  1.0f,
+        -1.0f,  1.0f,  1.0f,
+        -1.0f,  1.0f, -1.0f,
+
+        -1.0f, -1.0f, -1.0f,
+        -1.0f, -1.0f,  1.0f,
+         1.0f, -1.0f, -1.0f,
+         1.0f, -1.0f, -1.0f,
+        -1.0f, -1.0f,  1.0f,
+         1.0f, -1.0f,  1.0f
+    };
+
     // render info
     // -----------
     float ambientIntensity = 0.75f;
@@ -586,12 +591,12 @@ private:
         std::cout << std::endl;
         std::vector <std::string> faces
         {
-            "resources/textures/skybox/right.jpg",
-            "resources/textures/skybox/left.jpg",
-            "resources/textures/skybox/top.jpg",
-            "resources/textures/skybox/bottom.jpg",
-            "resources/textures/skybox/front.jpg",
-            "resources/textures/skybox/back.jpg"
+            "resources/textures/skybox2/right.jpg",
+            "resources/textures/skybox2/left.jpg",
+            "resources/textures/skybox2/top.jpg",
+            "resources/textures/skybox2/bottom.jpg",
+            "resources/textures/skybox2/front.jpg",
+            "resources/textures/skybox2/back.jpg"
         };
         cubemapTexture = loadCubemap(faces);
 
