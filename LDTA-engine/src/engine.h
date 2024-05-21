@@ -46,15 +46,6 @@ struct EngineInfo
 // -------------
 glm::vec3 lightColor(0.75f, 0.75f, 0.75f);
 
-// define shader numners
-// ---------------------
-#define s_SHADOWMAP     0
-#define s_DEPTHMAP      1
-#define s_DEBUGQUAD     2
-#define s_SKYBOX        3
-#define s_NORMALMAP     4
-#define s_MODELDRAW     5
-
 class Engine
 {
 public:
@@ -153,8 +144,10 @@ public:
 
         // set up render data 
         // ------------------
+        cubeVAO = 0;
+        quadVAO = 0;
         unsigned int cubemapTexture;
-        engineResource(Shaderlist, ModelList, SoundList, texture, cubemapTexture, audio);
+        engineResourceLoader(Shaderlist, ModelList, SoundList, texture, cubemapTexture, audio);
 
         // configure VAO 
         // -------------
@@ -431,6 +424,18 @@ private:
          1.0f, -1.0f,  1.0f
     };
 
+    // define shader numners
+    // ---------------------
+    enum
+    {
+        s_SHADOWMAP,
+        s_DEPTHMAP,
+        s_DEBUGQUAD,
+        s_SKYBOX,
+        s_NORMALMAP,
+        s_MODELDRAW
+    };
+
     // render info
     // -----------
     float ambientIntensity = 0.75f;
@@ -441,6 +446,7 @@ private:
     glm::mat4* projection = new glm::mat4;
     glm::mat4* view = new glm::mat4;
     GLfloat countdown1 = 0, countdown2 = 0, moveCountDown = 0;
+
     // resource info
     // -------------
     std::vector <unsigned int> texture;
@@ -545,7 +551,7 @@ private:
         }
     }
 
-    void engineResource(std::vector <Shader>& Shaderlist, std::vector <Model>& ModelList, std::vector <SoundInfo>& SoundList, std::vector <unsigned int>& Texture, unsigned int & cubemapTexture, AudioEngine& audio)
+    void engineResourceLoader(std::vector <Shader>& Shaderlist, std::vector <Model>& ModelList, std::vector <SoundInfo>& SoundList, std::vector <unsigned int>& Texture, unsigned int & cubemapTexture, AudioEngine& audio)
     {
         // build and compile shaders
         // -------------------------

@@ -26,18 +26,6 @@
     <ClInclude Include="src\engine.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\GL\camera.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\GL\mesh.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\GL\shader.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\GL\model.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\render.cpp">
       <Filter>Source Files</Filter>
     </ClInclude>
@@ -47,20 +35,32 @@
     <ClInclude Include="src\texture.cpp">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\GL\utility.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\GL\image.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="resource.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\GL\audio.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\soundinfo.h">
       <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\LDTA\audio.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\LDTA\camera.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\LDTA\image.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\LDTA\mesh.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\LDTA\model.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\LDTA\shader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\LDTA\utility.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

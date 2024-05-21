@@ -74,6 +74,9 @@
     <OutDir>$(SolutionDir)Build\$(Platform)\</OutDir>
     <IntDir>Intermediate\$(Platform)\$(Configuration)\</IntDir>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <OutDir>$(SolutionDir)Build\$(Platform)\</OutDir>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
@@ -108,7 +111,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>include\FMOD;src;include\stb;include\glm;include\GLFW;include\glad;include\GL;include\assimp;include\KHR;include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>include\FMOD;src;include\stb;include\glm;include\GLFW;include\glad;include\LDTA;include\assimp;include\KHR;include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
     </ClCompile>
@@ -140,13 +143,13 @@
     <ClCompile Include="src\engine.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="include\GL\audio.h" />
-    <ClInclude Include="include\GL\camera.h" />
-    <ClInclude Include="include\GL\image.h" />
-    <ClInclude Include="include\GL\mesh.h" />
-    <ClInclude Include="include\GL\model.h" />
-    <ClInclude Include="include\GL\shader.h" />
-    <ClInclude Include="include\GL\utility.h" />
+    <ClInclude Include="include\LDTA\audio.h" />
+    <ClInclude Include="include\LDTA\camera.h" />
+    <ClInclude Include="include\LDTA\image.h" />
+    <ClInclude Include="include\LDTA\mesh.h" />
+    <ClInclude Include="include\LDTA\model.h" />
+    <ClInclude Include="include\LDTA\shader.h" />
+    <ClInclude Include="include\LDTA\utility.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="src\engine.h" />
     <ClInclude Include="src\input.cpp" />
