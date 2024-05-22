@@ -77,12 +77,12 @@ public:
         if (ScreenValue.SCREEN_MODE == 1)
             window = glfwCreateWindow(ScreenValue.SCR_WIDTH, ScreenValue.SCR_HEIGHT, "LDTA - OPENGL ENGINE", glfwGetPrimaryMonitor(), NULL); // full screen
         else
-            if (ScreenValue.SCREEN_MODE == 0)
-            {
-                window = glfwCreateWindow(ScreenValue.SCR_WIDTH, ScreenValue.SCR_HEIGHT, "LDTA - OPENGL ENGINE", NULL, NULL); // window screen
-                setWindowPosition(ScreenValue, WindowsPos);
-                glfwSetWindowPos(window, WindowsPos.WINDOWS_POS_X, WindowsPos.WINDOWS_POS_Y);
-            }
+        if (ScreenValue.SCREEN_MODE == 0)
+        {
+             window = glfwCreateWindow(ScreenValue.SCR_WIDTH, ScreenValue.SCR_HEIGHT, "LDTA - OPENGL ENGINE", NULL, NULL); // window screen
+             setWindowPosition(ScreenValue, WindowsPos);
+             glfwSetWindowPos(window, WindowsPos.WINDOWS_POS_X, WindowsPos.WINDOWS_POS_Y);
+        }
 
         if (!window)
         {
@@ -109,6 +109,11 @@ public:
         // tell GLFW to capture the mouse
         glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
+        // configure video 
+        // ---------------
+        ShadowInfo value;
+        readVideoConfig("config/videoconfig.txt", value);
+
         // glad: load all OpenGL function pointers
         // ---------------------------------------
         if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
@@ -131,11 +136,6 @@ public:
             std::cout << "Display Memory (VRAM): " + DisplayMemory() << std::endl;
             std::cout << "Shading language version: " + std::string((char*)glGetString(GL_SHADING_LANGUAGE_VERSION)) << std::endl;
         }
-
-        // configure video 
-        // ---------------
-        ShadowInfo value;
-        readVideoConfig("config/videoconfig.txt", value);
 
         // configure global opengl state
         // -----------------------------
@@ -312,7 +312,7 @@ public:
             glDepthFunc(GL_LEQUAL);  // change depth function so depth test passes when values are equal to depth buffer's content
             Shaderlist[s_SKYBOX].use();
             glm:: mat4 model = glm::mat4(1.0f);
-            model = glm::scale(model, glm::vec3(0.5f));
+            model = glm::scale(model, glm::vec3(1.5f));
             model = glm::rotate(model, glm::radians((float)glfwGetTime() * 4.0f), glm::normalize(glm::vec3(0.25f, 0.0f, 0.5f)));
             *view = glm::mat4(glm::mat3(camera.GetViewMatrix())); // remove translation from the view matrix
             Shaderlist[s_SKYBOX].setMat4("view", *view);
@@ -489,12 +489,30 @@ private:
         if (file.is_open())
         {
             std::string line;
-            if (std::getline(file, line))
-                value.MAJOR_VERSION = std::stoi(line);
-            if (std::getline(file, line))
-                value.MINOR_VERSION = std::stoi(line);
-            if (std::getline(file, line))
-                value.SAMPLES_LEVEL = std::stoi(line);
+            while (std::getline(file, line)) {
+                size_t pos = line.find('=');
+                if (pos != std::string::npos) {
+                    std::string key = line.substr(0, pos);
+                    std::string getvalue = line.substr(pos + 1);
+
+                    // Remove leading and trailing whitespace from key and value
+                    key.erase(0, key.find_first_not_of(" \t"));
+                    key.erase(key.find_last_not_of(" \t") + 1);
+                    getvalue.erase(0, getvalue.find_first_not_of(" \t"));
+                    getvalue.erase(getvalue.find_last_not_of(" \t") + 1);
+
+                    if (key == "major_version") 
+                        value.MAJOR_VERSION = std::stoi(getvalue);                
+                    else 
+                    if (key == "minor_version") 
+                        value.MINOR_VERSION = std::stoi(getvalue);             
+                    else 
+                    if (key == "sample_level") 
+                        value.SAMPLES_LEVEL = std::stoi(getvalue);
+                    
+                }
+            }
+
             file.close();
 
             if (value.MAJOR_VERSION < 3 || value.MAJOR_VERSION > 4)
@@ -521,12 +539,30 @@ private:
         if (file.is_open())
         {
             std::string line;
-            if (std::getline(file, line))
-                value.SHADOW_RANGE = std::stoi(line);
-            if (std::getline(file, line))
-                value.SHADOW_WIDTH = std::stoi(line);
-            if (std::getline(file, line))
-                value.SHADOW_HEIGHT = std::stoi(line);
+            while (std::getline(file, line)) {
+                size_t pos = line.find('=');
+                if (pos != std::string::npos) {
+                    std::string key = line.substr(0, pos);
+                    std::string getvalue = line.substr(pos + 1);
+
+                    // Remove leading and trailing whitespace from key and value
+                    key.erase(0, key.find_first_not_of(" \t"));
+                    key.erase(key.find_last_not_of(" \t") + 1);
+                    getvalue.erase(0, getvalue.find_first_not_of(" \t"));
+                    getvalue.erase(getvalue.find_last_not_of(" \t") + 1);
+
+                    if (key == "shadow_range") 
+                        value.SHADOW_RANGE = std::stoi(getvalue);                 
+                    else 
+                    if (key == "shadow_width") 
+                        value.SHADOW_WIDTH = std::stoi(getvalue);     
+                    else 
+                    if (key == "shadow_height") 
+                        value.SHADOW_HEIGHT = std::stoi(getvalue);
+                    
+                }
+            }
+
             file.close();
 
             if (value.SHADOW_RANGE < 0) {
@@ -561,7 +597,7 @@ private:
         Shaderlist.push_back(Shader("resources/shaders/debug_quad.vs", "resources/shaders/debug_quad_depth.fs"));
         Shaderlist.push_back(Shader("resources/shaders/skybox.vs", "resources/shaders/skybox.fs"));
         Shaderlist.push_back(Shader("resources/shaders/normal_mapping.vs", "resources/shaders/normal_mapping.fs"));
-        Shaderlist.push_back(Shader("resources/shaders/model_loading.vs", "resources/shaders/model_loading.fs"));
+        Shaderlist.push_back(Shader("resources/shaders/viewmodel.vs", "resources/shaders/viewmodel.fs"));
 
         // load models
         // ------------
@@ -612,7 +648,7 @@ private:
         SoundList.push_back(SoundInfo("resources/audio/bgm_track2_loop.mp3", 0.025f, 2.0f, SOUND_LOOP));
         SoundList.push_back(SoundInfo("resources/audio/bgm_track1_loop.mp3", 0.025f, 2.0f, SOUND_LOOP));
         SoundList.push_back(SoundInfo("resources/audio/AK47_Fire1.wav", 0.0075f, 2.0f, SOUND_ONE_SHOT));
-        SoundList.push_back(SoundInfo("resources/audio/D.mp3", 0.075f, 9.0f, SOUND_ONE_SHOT));
+        SoundList.push_back(SoundInfo("resources/audio/D.mp3", 0.175f, 9.0f, SOUND_ONE_SHOT));
         SoundList.push_back(SoundInfo("resources/audio/player_step_1.wav", 0.05f, 3.0f, SOUND_ONE_SHOT));
         SoundList.push_back(SoundInfo("resources/audio/player_step_2.wav", 0.05f, 3.0f, SOUND_ONE_SHOT));
         SoundList.push_back(SoundInfo("resources/audio/player_step_3.wav", 0.05f, 3.0f, SOUND_ONE_SHOT));

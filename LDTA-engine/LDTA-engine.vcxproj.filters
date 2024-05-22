@@ -70,10 +70,10 @@
     <None Include="resources\shaders\debug_quad_depth.fs">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="resources\shaders\model_loading.fs">
+    <None Include="resources\shaders\viewmodel.fs">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="resources\shaders\model_loading.vs">
+    <None Include="resources\shaders\viewmodel.vs">
       <Filter>Resource Files</Filter>
     </None>
     <None Include="resources\shaders\shadow_mapping.fs">

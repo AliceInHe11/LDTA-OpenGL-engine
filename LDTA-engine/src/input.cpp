@@ -54,12 +54,30 @@ void readWindowConfig(const std::string& filename, ScreenInfo &ScreenValue) {
     std::ifstream file(filename);
     if (file.is_open()) {
         std::string line;
-        if (std::getline(file, line))
-            ScreenValue.SCREEN_MODE = std::stoi(line);
-        if (std::getline(file, line))
-            ScreenValue.SCR_WIDTH = std::stoi(line);
-        if (std::getline(file, line))
-            ScreenValue.SCR_HEIGHT = std::stoi(line);
+        while (std::getline(file, line)) {
+            size_t pos = line.find('=');
+            if (pos != std::string::npos) {
+                std::string key = line.substr(0, pos);
+                std::string getvalue = line.substr(pos + 1);
+
+                // Remove leading and trailing whitespace from key and value
+                key.erase(0, key.find_first_not_of(" \t"));
+                key.erase(key.find_last_not_of(" \t") + 1);
+                getvalue.erase(0, getvalue.find_first_not_of(" \t"));
+                getvalue.erase(getvalue.find_last_not_of(" \t") + 1);
+
+                if (key == "window_mode")
+                    ScreenValue.SCREEN_MODE = std::stoi(getvalue);
+                else
+                if (key == "width_resolution")
+                    ScreenValue.SCR_WIDTH = std::stoi(getvalue);
+                else
+                if (key == "height_resolution")
+                    ScreenValue.SCR_HEIGHT = std::stoi(getvalue);
+
+            }
+        }
+
         file.close();
 
         if (ScreenValue.SCR_WIDTH <= 0 || ScreenValue.SCR_HEIGHT <= 0) {

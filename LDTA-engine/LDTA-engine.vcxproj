@@ -160,8 +160,8 @@
   <ItemGroup>
     <None Include="resources\shaders\debug_quad.vs" />
     <None Include="resources\shaders\debug_quad_depth.fs" />
-    <None Include="resources\shaders\model_loading.fs" />
-    <None Include="resources\shaders\model_loading.vs" />
+    <None Include="resources\shaders\viewmodel.fs" />
+    <None Include="resources\shaders\viewmodel.vs" />
     <None Include="resources\shaders\normal_mapping.fs" />
     <None Include="resources\shaders\normal_mapping.vs" />
     <None Include="resources\shaders\shadow_mapping.fs" />
