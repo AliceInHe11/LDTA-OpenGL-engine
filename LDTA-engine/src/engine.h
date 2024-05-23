@@ -351,6 +351,7 @@ public:
         glDeleteBuffers(1, &planeVBO);
         glDeleteVertexArrays(1, &skyboxVAO);
         glDeleteBuffers(1, &skyboxVBO);
+
         delete lightProjection, lightSpaceMatrix, lightView, projection, view;
 
         glfwTerminate();
@@ -469,6 +470,15 @@ private:
             audio.playSound(SoundList[7]);
             moveCountDown = lastFrame;
         }
+        else
+        if (playerMovement == 2 && (moveCountDown == 0 || lastFrame - moveCountDown >= 0.2f))
+        {
+            audio.playSound(SoundList[4]);
+            audio.playSound(SoundList[5]);
+            audio.playSound(SoundList[6]);
+            audio.playSound(SoundList[7]);
+            moveCountDown = lastFrame;
+        }
 
         if (weaponsSound == 0 && (countdown1 == 0 || lastFrame - countdown1 >= 0.1f))
         {
@@ -483,15 +493,18 @@ private:
         }
     }
 
-    void readEnginConfig(const std::string& filename, EngineInfo& value) {
+    void readEnginConfig(const std::string& filename, EngineInfo& value) 
+    {
         std::ifstream file(filename);
 
         if (file.is_open())
         {
             std::string line;
-            while (std::getline(file, line)) {
+            while (std::getline(file, line)) 
+            {
                 size_t pos = line.find('=');
-                if (pos != std::string::npos) {
+                if (pos != std::string::npos) 
+                {
                     std::string key = line.substr(0, pos);
                     std::string getvalue = line.substr(pos + 1);
 
@@ -534,14 +547,17 @@ private:
         }
     }
 
-    void readVideoConfig(const std::string& filename, ShadowInfo& value) {
+    void readVideoConfig(const std::string& filename, ShadowInfo& value) 
+    {
         std::ifstream file(filename);
         if (file.is_open())
         {
             std::string line;
-            while (std::getline(file, line)) {
+            while (std::getline(file, line)) 
+            {
                 size_t pos = line.find('=');
-                if (pos != std::string::npos) {
+                if (pos != std::string::npos) 
+                {
                     std::string key = line.substr(0, pos);
                     std::string getvalue = line.substr(pos + 1);
 
@@ -565,11 +581,13 @@ private:
 
             file.close();
 
-            if (value.SHADOW_RANGE < 0) {
+            if (value.SHADOW_RANGE < 0) 
+            {
                 std::cout << "INVLID VALUE - RESTORE TO DEFAULT RANGE (10).";
                 value.SHADOW_RANGE = 10;
             }
-            if (value.SHADOW_WIDTH < 0 || value.SHADOW_HEIGHT < 0) {
+            if (value.SHADOW_WIDTH < 0 || value.SHADOW_HEIGHT < 0) 
+            {
                 std::cout << std::endl << "INVLID VALUE - RESTORE TO DEFAULT (512x512)." << std::endl;
                 value.SHADOW_WIDTH = 512;
                 value.SHADOW_HEIGHT = 512;

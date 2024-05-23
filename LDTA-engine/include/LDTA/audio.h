@@ -11,10 +11,10 @@
 #include <map>
 #include "soundinfo.h"
 
-/**
- * Error Handling Function for FMOD Errors
- * @param result - the FMOD_RESULT generated during every FMOD 
- */
+
+// * Error Handling Function for FMOD Errors
+// * @param result - the FMOD_RESULT generated during every FMOD 
+
 
 void ERRCHECK_fn(FMOD_RESULT result, const char* file, int line)
 {
@@ -25,25 +25,25 @@ void ERRCHECK_fn(FMOD_RESULT result, const char* file, int line)
 #define ERRCHECK(_result) ERRCHECK_fn(_result, __FILE__, __LINE__)
 // Error checking/debugging function definitions
 
-/**
- * Class that handles the process of loading and playing sounds by wrapping FMOD's functionality.
- * Deals with all FMOD calls so that FMOD-specific code does not need to be used outside this class.
- * Only one AudioEngine should be constructed for an application.
- */
+
+// * Class that handles the process of loading and playing sounds by wrapping FMOD's functionality.
+// * Deals with all FMOD calls so that FMOD-specific code does not need to be used outside this class.
+// * Only one AudioEngine should be constructed for an application.
+
 class AudioEngine {
 public:
     // The audio sampling rate of the audio engine
     static const int AUDIO_SAMPLE_RATE = 44100;
-    /**
-     * Default AudioEngine constructor. 
-     * AudioEngine::init() must be called before using the Audio Engine 
-     */
+    
+    //  Default AudioEngine constructor. 
+    //  AudioEngine::init() must be called before using the Audio Engine 
+    
     AudioEngine() : sounds(), loopsPlaying(), soundBanks(),
     eventDescriptions(), eventInstances() {}
 
-    /**
-     * Initializes Audio Engine Studio and Core systems to default values. 
-     */
+    
+    // Initializes Audio Engine Studio and Core systems to default values. 
+    
     void init()
     {
         ERRCHECK(FMOD::Studio::System::create(&studioSystem));

@@ -431,7 +431,8 @@ void renderCube()
     // initialize (if necessary)
     if (cubeVAO == 0)
     {
-        float vertices[] = {
+        float vertices[] = 
+        {
             // back face
             -1.0f, -1.0f, -1.0f,  0.0f,  0.0f, -1.0f, 0.0f, 0.0f, // bottom-left
              1.0f,  1.0f, -1.0f,  0.0f,  0.0f, -1.0f, 1.0f, 1.0f, // top-right
@@ -503,7 +504,8 @@ void renderQuad()
 {
     if (quadVAO == 0)
     {
-        float quadVertices[] = {
+        float quadVertices[] = 
+        {
             // positions        // texture Coords
             -1.0f,  1.0f, 0.0f, 0.0f, 1.0f,
             -1.0f, -1.0f, 0.0f, 0.0f, 0.0f,

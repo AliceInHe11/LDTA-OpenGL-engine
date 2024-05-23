@@ -37,10 +37,12 @@ int weaponsSound = -1;
 // player movement
 int playerMovement = -1;
 
-void setWindowPosition(ScreenInfo ScreenValue, WindowsPosition &WindowsPos) {
+void setWindowPosition(ScreenInfo ScreenValue, WindowsPosition &WindowsPos) 
+{
     const GLFWvidmode* mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
 
-    if (mode->width >= ScreenValue.SCR_WIDTH && mode->height >= ScreenValue.SCR_HEIGHT) {
+    if (mode->width >= ScreenValue.SCR_WIDTH && mode->height >= ScreenValue.SCR_HEIGHT) 
+    {
         WindowsPos.WINDOWS_POS_X = mode->width / 2 - ScreenValue.SCR_WIDTH / 2;
         WindowsPos.WINDOWS_POS_Y = mode->height / 2 - ScreenValue.SCR_HEIGHT / 2;
     }
@@ -50,13 +52,17 @@ void setWindowPosition(ScreenInfo ScreenValue, WindowsPosition &WindowsPos) {
 
 // config a window mode and resolution
 // -----------------------------------
-void readWindowConfig(const std::string& filename, ScreenInfo &ScreenValue) {
+void readWindowConfig(const std::string& filename, ScreenInfo &ScreenValue) 
+{
     std::ifstream file(filename);
-    if (file.is_open()) {
+    if (file.is_open()) 
+    {
         std::string line;
-        while (std::getline(file, line)) {
+        while (std::getline(file, line)) 
+        {
             size_t pos = line.find('=');
-            if (pos != std::string::npos) {
+            if (pos != std::string::npos) 
+            {
                 std::string key = line.substr(0, pos);
                 std::string getvalue = line.substr(pos + 1);
 
@@ -80,12 +86,14 @@ void readWindowConfig(const std::string& filename, ScreenInfo &ScreenValue) {
 
         file.close();
 
-        if (ScreenValue.SCR_WIDTH <= 0 || ScreenValue.SCR_HEIGHT <= 0) {
+        if (ScreenValue.SCR_WIDTH <= 0 || ScreenValue.SCR_HEIGHT <= 0) 
+        {
             std::cout << "INVLID RESOLUTION VALUE - RESTORE TO DEFAULT RESOLUTION (800x600).";
             ScreenValue.SCR_WIDTH = 800;
             ScreenValue.SCR_HEIGHT = 600;
         }
-        if (ScreenValue.SCREEN_MODE < 0 || ScreenValue.SCREEN_MODE > 1) {
+        if (ScreenValue.SCREEN_MODE < 0 || ScreenValue.SCREEN_MODE > 1) 
+        {
             std::cout << std::endl << "INVLID WINDOW MODE VALUE - RESTORE TO DEFAULT WINDOW MODE (WINDOWSCREEN).";
             ScreenValue.SCREEN_MODE = 0;
         }
@@ -98,7 +106,8 @@ void readWindowConfig(const std::string& filename, ScreenInfo &ScreenValue) {
         std::cout << std::endl << "Resolution: " << ScreenValue.SCR_WIDTH << "x" << ScreenValue.SCR_HEIGHT << std::endl;
 
     }
-    else {
+    else 
+    {
         std::cout << "CAN NOT OPEN CONFIG FILE - USING DEFAULT CONFIG.";
         std::cout << std::endl << "WINDOW MODE: WINDOWSCREEN";
         std::cout << std::endl << "RESOLUTION: 800x600" << std::endl;
@@ -126,7 +135,8 @@ void processInput(GLFWwindow* window)
                 camera.ProcessKeyboard(UP, deltaTime * 5);
             if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS)
                 camera.ProcessKeyboard(DOWN, deltaTime * 5);
-        }else
+        }
+        else
         if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
         {
             if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
@@ -142,7 +152,8 @@ void processInput(GLFWwindow* window)
             if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS)
                 camera.ProcessKeyboard(DOWN, deltaTime);
         }
-        else {
+        else 
+        {
             if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
                 camera.ProcessKeyboard(FORWARD, deltaTime * 2.5);
             if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
@@ -215,12 +226,27 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
     if (key == GLFW_KEY_3 && action == GLFW_PRESS)
         weaponsNum = 2;
 
-    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS || glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS ||
-        glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS || glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-
-        playerMovement = 1;
-    else
+    if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
         playerMovement = -1;
+    else
+    if (glfwGetKey(window, GLFW_KEY_C) == GLFW_PRESS)
+    {
+        if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS || glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS ||
+            glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS || glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+
+            playerMovement = 2;
+        else
+            playerMovement = -1;
+    }
+    else
+    {
+        if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS || glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS ||
+            glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS || glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+
+            playerMovement = 1;
+        else
+            playerMovement = -1;
+    }
 }
 
 void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
@@ -240,7 +266,8 @@ void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
         weaponsSound = -1;
 }
 
-void changeLightPos(GLFWwindow* window, glm::vec3& lightPos) {
+void changeLightPos(GLFWwindow* window, glm::vec3& lightPos) 
+{
     if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
         if (lightPos.y >= 20.0f)
             lightPos.y = 20.0f;
@@ -266,7 +293,8 @@ void changeLightPos(GLFWwindow* window, glm::vec3& lightPos) {
             lightPos.x -= 0.25f;
 }
 
-void changeLightInfo(GLFWwindow* window, glm::vec3& lightColor, float& ambientIntensity) {
+void changeLightInfo(GLFWwindow* window, glm::vec3& lightColor, float& ambientIntensity) 
+{
     if (glfwGetKey(window, GLFW_KEY_RIGHT_SHIFT) == GLFW_PRESS)
     {
         if (glfwGetKey(window, GLFW_KEY_R) == GLFW_PRESS)
