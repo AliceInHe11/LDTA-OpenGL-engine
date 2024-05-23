@@ -464,31 +464,32 @@ private:
     {
         if (playerMovement == 1 && (moveCountDown == 0 || lastFrame - moveCountDown >= 0.3f))
         {
-            audio.playSound(SoundList[4]);
             audio.playSound(SoundList[5]);
             audio.playSound(SoundList[6]);
             audio.playSound(SoundList[7]);
+            audio.playSound(SoundList[8]);
             moveCountDown = lastFrame;
         }
         else
         if (playerMovement == 2 && (moveCountDown == 0 || lastFrame - moveCountDown >= 0.2f))
         {
-            audio.playSound(SoundList[4]);
             audio.playSound(SoundList[5]);
             audio.playSound(SoundList[6]);
             audio.playSound(SoundList[7]);
+            audio.playSound(SoundList[8]);
             moveCountDown = lastFrame;
         }
 
         if (weaponsSound == 0 && (countdown1 == 0 || lastFrame - countdown1 >= 0.1f))
         {
             audio.playSound(SoundList[2]);
+            audio.playSound(SoundList[3]);
             countdown1 = lastFrame;
         }
         else
         if (weaponsSound == 1 && (countdown2 == 0 || lastFrame - countdown2 >= 2.0f))
         {
-             audio.playSound(SoundList[3]);
+             audio.playSound(SoundList[4]);
              countdown2 = lastFrame;
         }
     }
@@ -666,6 +667,7 @@ private:
         SoundList.push_back(SoundInfo("resources/audio/bgm_track2_loop.mp3", 0.025f, 2.0f, SOUND_LOOP));
         SoundList.push_back(SoundInfo("resources/audio/bgm_track1_loop.mp3", 0.025f, 2.0f, SOUND_LOOP));
         SoundList.push_back(SoundInfo("resources/audio/AK47_Fire1.wav", 0.0075f, 2.0f, SOUND_ONE_SHOT));
+        SoundList.push_back(SoundInfo("resources/audio/AK47_Fire2.wav", 0.075f, 2.0f, SOUND_ONE_SHOT));
         SoundList.push_back(SoundInfo("resources/audio/D.mp3", 0.175f, 9.0f, SOUND_ONE_SHOT));
         SoundList.push_back(SoundInfo("resources/audio/player_step_1.wav", 0.05f, 3.0f, SOUND_ONE_SHOT));
         SoundList.push_back(SoundInfo("resources/audio/player_step_2.wav", 0.05f, 3.0f, SOUND_ONE_SHOT));
