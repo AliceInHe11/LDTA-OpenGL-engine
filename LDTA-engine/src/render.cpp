@@ -366,6 +366,17 @@ void renderModel(Shader& shader, std::vector <Model>& ModelList, unsigned int& d
     else
         ModelList[10].Draw(shader);
 
+    model = glm::mat4(1.0f);
+    model = glm::translate(model, glm::vec3(-10.0f, -0.25f, -6.0f));
+    model = glm::rotate(model, glm::radians(270.0f), glm::normalize(glm::vec3(1.0f, 0.0f, 0.0f)));
+    model = glm::rotate(model, glm::radians(-90.0f), glm::normalize(glm::vec3(0.0f, 0.0f, 1.0f)));
+    model = glm::scale(model, glm::vec3(5.75f));
+    shader.setMat4("model", model);
+    if (renderDepth == false)
+        ModelList[11].DrawShadowCast(shader, depthMaP);
+    else
+        ModelList[11].Draw(shader);
+
 }
 
 // renders the 3D view model
@@ -388,7 +399,7 @@ void renderViewmodel(Shader& shader, std::vector <Model>& ModelList, glm::mat4& 
             model = glm::inverse(view) * model;
 
             shader.setMat4("model", model);
-            ModelList[11].Draw_m(shader);
+            ModelList[12].Draw_m(shader);
 
             break;
 
@@ -415,7 +426,7 @@ void renderViewmodel(Shader& shader, std::vector <Model>& ModelList, glm::mat4& 
             model = glm::inverse(view) * model;
 
             shader.setMat4("model", model);
-            ModelList[12].Draw_m(shader);
+            ModelList[13].Draw_m(shader);
 
             break;
 
