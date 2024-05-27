@@ -15,7 +15,7 @@ void renderQuad();
 
 // renders the 3D scene
 // --------------------
-void renderScene(const Shader& shader, std::vector <unsigned int>& Texture,bool &renderDepth)
+static void renderScene(Shader& shader, std::vector <Model>& MapList, std::vector <unsigned int>& Texture, unsigned int& depthMaP,bool &renderDepth)
 {   
     if (renderDepth == false) {
         glActiveTexture(GL_TEXTURE0);
@@ -139,11 +139,29 @@ void renderScene(const Shader& shader, std::vector <unsigned int>& Texture,bool 
     model = glm::scale(model, glm::vec3(0.5f));
     shader.setMat4("model", model);
     renderCube();
+
+    model = glm::mat4(1.0f);
+    model = glm::translate(model, glm::vec3(-20.0f, -0.4f, -20.0f));
+    model = glm::scale(model, glm::vec3(0.015f));
+    shader.setMat4("model", model);
+    if (renderDepth == false)
+        MapList[0].DrawShadowCast(shader, depthMaP);
+    else
+        MapList[0].Draw(shader);
+
+    model = glm::mat4(1.0f);
+    model = glm::translate(model, glm::vec3(30.0f, 1.0f, -20.0f));
+    model = glm::scale(model, glm::vec3(1.5f));
+    shader.setMat4("model", model);
+    if (renderDepth == false)
+        MapList[1].DrawShadowCast(shader, depthMaP);
+    else
+        MapList[1].Draw(shader);
 }
 
 // renders the 3D model
 // ---------------------
-void renderModel(Shader& shader, std::vector <Model>& ModelList, unsigned int& depthMaP, bool& renderDepth)
+static void renderModel(Shader& shader, std::vector <Model>& ModelList, unsigned int& depthMaP, bool& renderDepth)
 {
     // model
     glm::mat4 model = glm::mat4(1.0f);
@@ -381,7 +399,7 @@ void renderModel(Shader& shader, std::vector <Model>& ModelList, unsigned int& d
 
 // renders the 3D view model
 // --------------------------
-void renderViewmodel(Shader& shader, std::vector <Model>& ModelList, glm::mat4& projection, glm::mat4& view, unsigned int &weaponsNum)
+static void renderViewmodel(Shader& shader, std::vector <Model>& ModelList, glm::mat4& projection, glm::mat4& view, unsigned int &weaponsNum)
 {
     shader.use();
     shader.setMat4("projection", projection);

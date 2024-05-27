@@ -37,7 +37,7 @@ int weaponsSound = -1;
 // player movement
 int playerMovement = -1;
 
-void setWindowPosition(ScreenInfo ScreenValue, WindowsPosition &WindowsPos) 
+static void setWindowPosition(ScreenInfo ScreenValue, WindowsPosition &WindowsPos)
 {
     const GLFWvidmode* mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
 
@@ -52,7 +52,7 @@ void setWindowPosition(ScreenInfo ScreenValue, WindowsPosition &WindowsPos)
 
 // config a window mode and resolution
 // -----------------------------------
-void readWindowConfig(const std::string& filename, ScreenInfo &ScreenValue) 
+static void readWindowConfig(const std::string& filename, ScreenInfo &ScreenValue)
 {
     std::ifstream file(filename);
     if (file.is_open()) 
@@ -116,7 +116,7 @@ void readWindowConfig(const std::string& filename, ScreenInfo &ScreenValue)
 
 // process all input: query GLFW whether relevant keys are pressed/released this frame and react accordingly
 // ---------------------------------------------------------------------------------------------------------
-void processInput(GLFWwindow* window)
+static void processInput(GLFWwindow* window)
 {
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
@@ -171,7 +171,7 @@ void processInput(GLFWwindow* window)
 
 // glfw: whenever the window size changed (by OS or user resize) this callback function executes
 // ---------------------------------------------------------------------------------------------
-void framebuffer_size_callback(GLFWwindow* window, int width, int height)
+static void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {
     // make sure the viewport matches the new window dimensions; note that width and 
     // height will be significantly larger than specified on retina displays.
@@ -180,7 +180,7 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 
 // glfw: whenever the mouse moves, this callback is called
 // -------------------------------------------------------
-void mouse_callback(GLFWwindow* window, double xposIn, double yposIn)
+static void mouse_callback(GLFWwindow* window, double xposIn, double yposIn)
 {
     float xpos = static_cast<float>(xposIn);
     float ypos = static_cast<float>(yposIn);
@@ -202,14 +202,14 @@ void mouse_callback(GLFWwindow* window, double xposIn, double yposIn)
 
 // glfw: whenever the mouse scroll wheel scrolls, this callback is called
 // ----------------------------------------------------------------------
-void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
+static void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 {
     camera.ProcessMouseScroll(static_cast<float>(yoffset));
 }
 
 // glfw: whenever the key are press, this callback is called
 // ----------------------------------------------------------------------
-void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
+static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
     if (key == GLFW_KEY_O && action == GLFW_PRESS)
         if(DynamicPos == true)     

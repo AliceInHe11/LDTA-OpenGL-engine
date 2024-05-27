@@ -50,18 +50,18 @@ D:\3d\LDTA-engine\LDTA-engine\src\input.cpp(166,54): warning C4244: 'argument': 
 D:\3d\LDTA-engine\LDTA-engine\src\input.cpp(168,56): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
   (compiling source file 'src/engine.cpp')
   
+D:\3d\LDTA-engine\LDTA-engine\src\engine.h(246,49): warning C4244: '=': conversion from 'double' to 'T', possible loss of data
+D:\3d\LDTA-engine\LDTA-engine\src\engine.h(246,49): warning C4244:         with
+D:\3d\LDTA-engine\LDTA-engine\src\engine.h(246,49): warning C4244:         [
+D:\3d\LDTA-engine\LDTA-engine\src\engine.h(246,49): warning C4244:             T=float
+D:\3d\LDTA-engine\LDTA-engine\src\engine.h(246,49): warning C4244:         ]
+  (compiling source file 'src/engine.cpp')
+  
 D:\3d\LDTA-engine\LDTA-engine\src\engine.h(247,49): warning C4244: '=': conversion from 'double' to 'T', possible loss of data
 D:\3d\LDTA-engine\LDTA-engine\src\engine.h(247,49): warning C4244:         with
 D:\3d\LDTA-engine\LDTA-engine\src\engine.h(247,49): warning C4244:         [
 D:\3d\LDTA-engine\LDTA-engine\src\engine.h(247,49): warning C4244:             T=float
 D:\3d\LDTA-engine\LDTA-engine\src\engine.h(247,49): warning C4244:         ]
-  (compiling source file 'src/engine.cpp')
-  
-D:\3d\LDTA-engine\LDTA-engine\src\engine.h(248,49): warning C4244: '=': conversion from 'double' to 'T', possible loss of data
-D:\3d\LDTA-engine\LDTA-engine\src\engine.h(248,49): warning C4244:         with
-D:\3d\LDTA-engine\LDTA-engine\src\engine.h(248,49): warning C4244:         [
-D:\3d\LDTA-engine\LDTA-engine\src\engine.h(248,49): warning C4244:             T=float
-D:\3d\LDTA-engine\LDTA-engine\src\engine.h(248,49): warning C4244:         ]
   (compiling source file 'src/engine.cpp')
   
      Creating library D:\3d\LDTA-engine\Build\x64\LDTA-engine.lib and object D:\3d\LDTA-engine\Build\x64\LDTA-engine.exp

@@ -73,7 +73,6 @@ public:
         // glfw window creation
         // --------------------
         readWindowConfig("config/windowconfig.txt", ScreenValue);
-        GLFWwindow* window = NULL;
         if (ScreenValue.SCREEN_MODE == 1)
             window = glfwCreateWindow(ScreenValue.SCR_WIDTH, ScreenValue.SCR_HEIGHT, "LDTA - OPENGL ENGINE", glfwGetPrimaryMonitor(), NULL); // full screen
         else
@@ -147,7 +146,7 @@ public:
         cubeVAO = 0;
         quadVAO = 0;
         unsigned int cubemapTexture;
-        engineResourceLoader(Shaderlist, ModelList, SoundList, texture, cubemapTexture, audio);
+        engineResourceLoader(Shaderlist, ModelList,MapList, SoundList, texture, cubemapTexture, audio);
 
         // configure VAO 
         // -------------
@@ -229,7 +228,7 @@ public:
             deltaTime = currentFrame - lastFrame;
             lastFrame = currentFrame;
 
-            GLfloat near_plane = 0.15f, far_plane = 30.5f;
+            GLfloat near_plane = 0.15f, far_plane = 50.5f;
             //*lightProjection = glm::perspective(glm::radians(90.0f), (GLfloat)value.SHADOW_WIDTH / (GLfloat)value.SHADOW_HEIGHT, near_plane, far_plane); // note that if you use a perspective projection matrix you'll have to change the light position as the current light position isn't enough to reflect the whole scene
             *lightProjection = glm::ortho(-(GLfloat)value.SHADOW_RANGE, (GLfloat)value.SHADOW_RANGE, -(GLfloat)value.SHADOW_RANGE, (GLfloat)value.SHADOW_RANGE, near_plane, far_plane);
             *lightView = glm::lookAt(lightPos, glm::vec3(0.0f), glm::vec3(0.0, 1.0, 0.0));
@@ -244,8 +243,8 @@ public:
             // change light position over time
             if (DynamicPos == true)
             {
-                lightPos.x = sin(glfwGetTime()) * 5.5f;
-                lightPos.z = cos(glfwGetTime()) * 5.5f;
+                lightPos.x = sin(glfwGetTime()) * 15.5f;
+                lightPos.z = cos(glfwGetTime()) * 15.5f;
             }
             //lightPos.y = 5.0 + cos(glfwGetTime()) * 1.0f ;
             changeLightPos(window, lightPos);
@@ -265,7 +264,7 @@ public:
             glViewport(0, 0, value.SHADOW_WIDTH, value.SHADOW_HEIGHT);
             glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
             glClear(GL_DEPTH_BUFFER_BIT);
-            renderScene(Shaderlist[s_DEPTHMAP], texture, renderDepth = true);
+            renderScene(Shaderlist[s_DEPTHMAP],MapList, texture, depthMaP, renderDepth = true);
             renderModel(Shaderlist[s_DEPTHMAP], ModelList, depthMaP, renderDepth = true);
             glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
@@ -283,6 +282,7 @@ public:
             Shaderlist[s_NORMALMAP].setVec3("lightPos", lightPos);
             Shaderlist[s_NORMALMAP].setVec3("lightColor", lightColor);
             Shaderlist[s_NORMALMAP].setMat4("lightSpaceMatrix", *lightSpaceMatrix);
+
             glActiveTexture(GL_TEXTURE1);
             glBindTexture(GL_TEXTURE_2D, depthMaP);
             renderModel(Shaderlist[s_NORMALMAP], ModelList, depthMaP, renderDepth = false);
@@ -297,9 +297,11 @@ public:
             Shaderlist[s_SHADOWMAP].setVec3("lightPos", lightPos);
             Shaderlist[s_SHADOWMAP].setVec3("lightColor", lightColor);
             Shaderlist[s_SHADOWMAP].setMat4("lightSpaceMatrix", *lightSpaceMatrix);
+
             glActiveTexture(GL_TEXTURE1);
             glBindTexture(GL_TEXTURE_2D, depthMaP);
-            renderScene(Shaderlist[s_SHADOWMAP], texture, renderDepth = false);
+
+            renderScene(Shaderlist[s_SHADOWMAP],MapList, texture, depthMaP, renderDepth = false);
 
             // 4. render view model
             // --------------------
@@ -311,13 +313,14 @@ public:
             // ------------------------
             glDepthFunc(GL_LEQUAL);  // change depth function so depth test passes when values are equal to depth buffer's content
             Shaderlist[s_SKYBOX].use();
-            glm:: mat4 model = glm::mat4(1.0f);
+            glm::mat4 model = glm::mat4(1.0f);
             model = glm::scale(model, glm::vec3(1.5f));
             model = glm::rotate(model, glm::radians((float)glfwGetTime() * 4.0f), glm::normalize(glm::vec3(0.25f, 0.0f, 0.5f)));
             *view = glm::mat4(glm::mat3(camera.GetViewMatrix())); // remove translation from the view matrix
             Shaderlist[s_SKYBOX].setMat4("view", *view);
             Shaderlist[s_SKYBOX].setMat4("projection", *projection);
             Shaderlist[s_SKYBOX].setMat4("model", model);
+
             // skybox cube
             glBindVertexArray(skyboxVAO);
             glActiveTexture(GL_TEXTURE0);
@@ -437,6 +440,8 @@ private:
         s_MODELDRAW
     };
 
+    GLFWwindow* window = NULL;
+
     // render info
     // -----------
     float ambientIntensity = 0.75f;
@@ -454,6 +459,7 @@ private:
     std::vector <std::string> faces;
     std::vector <Shader> Shaderlist;
     std::vector <Model> ModelList;
+    std::vector <Model> MapList;
     std::vector <SoundInfo> SoundList;
 
     // audio
@@ -606,7 +612,9 @@ private:
         }
     }
 
-    void engineResourceLoader(std::vector <Shader>& Shaderlist, std::vector <Model>& ModelList, std::vector <SoundInfo>& SoundList, std::vector <unsigned int>& Texture, unsigned int & cubemapTexture, AudioEngine& audio)
+    void engineResourceLoader(std::vector <Shader>& Shaderlist, std::vector <Model>& ModelList,
+                              std::vector <Model>& MapList, std::vector <SoundInfo>& SoundList, 
+                              std::vector <unsigned int>& Texture, unsigned int & cubemapTexture, AudioEngine& audio)
     {
         // build and compile shaders
         // -------------------------
@@ -638,6 +646,12 @@ private:
         ModelList.push_back(Model("resources/objects/viking_room/viking_room.obj"));
         ModelList.push_back(Model("resources/objects/weapons/ak47.obj"));
         ModelList.push_back(Model("resources/objects/weapons/StingSword.obj"));
+
+        // load map
+        // --------
+        std::cout << std::endl;
+        MapList.push_back(Model("resources/maps/dust_2/de_dust2.obj"));
+        MapList.push_back(Model("resources/maps/desert/DesertMap.obj"));
 
         // load textures
         // -------------

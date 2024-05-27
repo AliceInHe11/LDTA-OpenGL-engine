@@ -1,7 +1,7 @@
 
 // load texture from file
 // ----------------------
-unsigned int loadTexture(char const* path)
+static unsigned int loadTexture(char const* path)
 {
     unsigned int textureID=0;
     glGenTextures(1, &textureID);
@@ -45,7 +45,7 @@ unsigned int loadTexture(char const* path)
 
 // load sky box textures from file
 // -------------------------------
-unsigned int loadCubemap(std::vector<std::string> faces)
+static unsigned int loadCubemap(std::vector<std::string> faces)
 {
     unsigned int textureID=0;
     glGenTextures(1, &textureID);
