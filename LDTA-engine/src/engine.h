@@ -243,8 +243,8 @@ public:
             // change light position over time
             if (DynamicPos == true)
             {
-                lightPos.x = sin(glfwGetTime()) * 15.5f;
-                lightPos.z = cos(glfwGetTime()) * 15.5f;
+                lightPos.x = sin(glfwGetTime()) * 15.5f ;
+                lightPos.z = cos(glfwGetTime()) * 15.5f ;
             }
             //lightPos.y = 5.0 + cos(glfwGetTime()) * 1.0f ;
             changeLightPos(window, lightPos);
@@ -652,6 +652,7 @@ private:
         std::cout << std::endl;
         MapList.push_back(Model("resources/maps/dust_2/de_dust2.obj"));
         MapList.push_back(Model("resources/maps/desert/DesertMap.obj"));
+        MapList.push_back(Model("resources/maps/italy/cs_italy.obj"));
 
         // load textures
         // -------------

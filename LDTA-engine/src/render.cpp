@@ -157,6 +157,15 @@ static void renderScene(Shader& shader, std::vector <Model>& MapList, std::vecto
         MapList[1].DrawShadowCast(shader, depthMaP);
     else
         MapList[1].Draw(shader);
+
+    model = glm::mat4(1.0f);
+    model = glm::translate(model, glm::vec3(-40.0f, -0.4f, 50.0f));
+    model = glm::scale(model, glm::vec3(0.015f));
+    shader.setMat4("model", model);
+    if (renderDepth == false)
+        MapList[2].DrawShadowCast(shader, depthMaP);
+    else
+        MapList[2].Draw(shader);
 }
 
 // renders the 3D model
