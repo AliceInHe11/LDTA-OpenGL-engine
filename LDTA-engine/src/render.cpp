@@ -1,17 +1,3 @@
-// meshes
-unsigned int planeVAO;
-
-// renderCube() renders a 1x1 3D cube in NDC.
-// ------------------------------------------
-unsigned int cubeVAO = 0;
-unsigned int cubeVBO = 0;
-void renderCube();
-
-// renderQuad() renders a 1x1 XY quad in NDC
-// -----------------------------------------
-unsigned int quadVAO = 0;
-unsigned int quadVBO;
-void renderQuad();
 
 // renders the 3D scene
 // --------------------
@@ -23,7 +9,7 @@ static void renderScene(Shader& shader, std::vector <Model>& MapList, std::vecto
     }
 
     // floor
-    glm::mat4 model = glm::mat4(1.0f);
+    model = glm::mat4(1.0f);
     shader.setMat4("model", model);
     glBindVertexArray(planeVAO);
     glDrawArrays(GL_TRIANGLES, 0, 6);
@@ -173,7 +159,7 @@ static void renderScene(Shader& shader, std::vector <Model>& MapList, std::vecto
 static void renderModel(Shader& shader, std::vector <Model>& ModelList, unsigned int& depthMaP, bool& renderDepth)
 {
     // model
-    glm::mat4 model = glm::mat4(1.0f);
+    model = glm::mat4(1.0f);
     model = glm::translate(model, glm::vec3(2.0f, 1.0f, -3.0f));
     model = glm::rotate(model, glm::radians((float)-glfwGetTime() * 300.0f), glm::normalize(glm::vec3(1.0, 0.0, 1.0)));
     model = glm::scale(model, glm::vec3(0.15f));
@@ -413,7 +399,6 @@ static void renderViewmodel(Shader& shader, std::vector <Model>& ModelList, glm:
     shader.use();
     shader.setMat4("projection", projection);
     shader.setMat4("view", view);
-    glm::mat4 model;
 
     switch (weaponsNum)
     {

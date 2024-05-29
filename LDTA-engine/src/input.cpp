@@ -1,41 +1,8 @@
-struct ScreenInfo 
-{
-    // settings window mode (1 - fullscren, 0 - window screen)
-    unsigned int SCREEN_MODE = 0;
-    // settings resolution
-    unsigned int SCR_WIDTH = 800;
-    unsigned int SCR_HEIGHT = 600;
-};
-ScreenInfo ScreenValue;
-
-struct WindowsPosition
-{
-    unsigned int WINDOWS_POS_X;
-    unsigned int WINDOWS_POS_Y;
-};
-WindowsPosition WindowsPos;
-
 // camera
 Camera camera(glm::vec3(-3.0f, 3.0f, 3.0f));
-Camera viewmodel(glm::vec3(-3.0f, 3.0f, 3.0f));
 float lastX = (float)ScreenValue.SCR_WIDTH / 2.0;
 float lastY = (float)ScreenValue.SCR_HEIGHT / 2.0;
 bool firstMouse = true;
-
-// timing
-float deltaTime = 0.0f;
-float lastFrame = 0.0f;
-
-// light position
-glm::vec3 lightPos(3.0f, 10.0f, 3.0f);
-bool DynamicPos = true;
-
-// weapon switch
-unsigned int weaponsNum = 0;
-int weaponsSound = -1;
-
-// player movement
-int playerMovement = -1;
 
 static void setWindowPosition(ScreenInfo ScreenValue, WindowsPosition &WindowsPos)
 {

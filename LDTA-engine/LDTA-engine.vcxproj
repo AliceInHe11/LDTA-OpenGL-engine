@@ -151,6 +151,7 @@
     <ClInclude Include="include\LDTA\shader.h" />
     <ClInclude Include="include\LDTA\utility.h" />
     <ClInclude Include="resource.h" />
+    <ClInclude Include="src\common.h" />
     <ClInclude Include="src\engine.h" />
     <ClInclude Include="src\input.cpp" />
     <ClInclude Include="src\render.cpp" />

@@ -1,21 +1,7 @@
 #ifndef ENGINE_H
 #define ENGINE_H
 
-#include <iostream>
-#include <vector> 
-#include <iostream>
-#include <fstream>
-#include <sstream>
-#include <string>
-#include <windows.h>
-
-#include <glad.h>
-#include <glfw3.h>
-
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
-
+#include <common.h>
 #include <image.h>
 #include <utility.h>
 #include <camera.h>
@@ -27,24 +13,6 @@
 #include "texture.cpp"
 #include "render.cpp"
 #include "input.cpp"
-
-struct ShadowInfo
-{
-    unsigned int SHADOW_WIDTH;
-    unsigned int SHADOW_HEIGHT;
-    unsigned int SHADOW_RANGE;
-};
-
-struct EngineInfo
-{
-    int MAJOR_VERSION;
-    int MINOR_VERSION;
-    int SAMPLES_LEVEL;
-};
-
-// lighting info
-// -------------
-glm::vec3 lightColor(0.75f, 0.75f, 0.75f);
 
 class Engine
 {
@@ -313,7 +281,7 @@ public:
             // ------------------------
             glDepthFunc(GL_LEQUAL);  // change depth function so depth test passes when values are equal to depth buffer's content
             Shaderlist[s_SKYBOX].use();
-            glm::mat4 model = glm::mat4(1.0f);
+            model = glm::mat4(1.0f);
             model = glm::scale(model, glm::vec3(1.5f));
             model = glm::rotate(model, glm::radians((float)glfwGetTime() * 4.0f), glm::normalize(glm::vec3(0.25f, 0.0f, 0.5f)));
             *view = glm::mat4(glm::mat3(camera.GetViewMatrix())); // remove translation from the view matrix
@@ -338,7 +306,7 @@ public:
             //Shaderlist[s_DEBUGQUAD].use();
             //Shaderlist[s_DEBUGQUAD].setFloat("near_plane", near_plane);
             //Shaderlist[s_DEBUGQUAD].setFloat("far_plane", far_plane);
-            //glActiveTexture(GL_TEXTURE0);
+            //glActiveTexture(GL_TEXTURE1);
             //glBindTexture(GL_TEXTURE_2D, depthMaP);
             //renderQuad();
 
@@ -350,17 +318,16 @@ public:
 
         // optional: de-allocate all resources once they've outlived their purpose:
         // ------------------------------------------------------------------------
+        for (int i = 0; i < SoundList.size(); i++)
+            if (audio.soundIsPlaying(SoundList[i]))
+                audio.stopSound(SoundList[i]);
+
         glDeleteVertexArrays(1, &planeVAO);
         glDeleteBuffers(1, &planeVBO);
         glDeleteVertexArrays(1, &skyboxVAO);
         glDeleteBuffers(1, &skyboxVBO);
-
         delete lightProjection, lightSpaceMatrix, lightView, projection, view;
-
         glfwTerminate();
-        for (int i = 0; i < SoundList.size(); i++)
-            if(audio.soundIsPlaying(SoundList[i]))
-               audio.stopSound(SoundList[i]);
         
         system("pause");
         return 0;
