@@ -44,12 +44,12 @@ public:
         if (ScreenValue.SCREEN_MODE == 1)
             window = glfwCreateWindow(ScreenValue.SCR_WIDTH, ScreenValue.SCR_HEIGHT, "LDTA - OPENGL ENGINE", glfwGetPrimaryMonitor(), NULL); // full screen
         else
-        if (ScreenValue.SCREEN_MODE == 0)
-        {
-             window = glfwCreateWindow(ScreenValue.SCR_WIDTH, ScreenValue.SCR_HEIGHT, "LDTA - OPENGL ENGINE", NULL, NULL); // window screen
-             setWindowPosition(ScreenValue, WindowsPos);
-             glfwSetWindowPos(window, WindowsPos.WINDOWS_POS_X, WindowsPos.WINDOWS_POS_Y);
-        }
+            if (ScreenValue.SCREEN_MODE == 0)
+            {
+                window = glfwCreateWindow(ScreenValue.SCR_WIDTH, ScreenValue.SCR_HEIGHT, "LDTA - OPENGL ENGINE", NULL, NULL); // window screen
+                setWindowPosition(ScreenValue, WindowsPos);
+                glfwSetWindowPos(window, WindowsPos.WINDOWS_POS_X, WindowsPos.WINDOWS_POS_Y);
+            }
 
         if (!window)
         {
@@ -114,7 +114,7 @@ public:
         cubeVAO = 0;
         quadVAO = 0;
         unsigned int cubemapTexture;
-        engineResourceLoader(Shaderlist, ModelList,MapList, SoundList, texture, cubemapTexture, audio);
+        engineResourceLoader(Shaderlist, ModelList, MapList, SoundList, texture, cubemapTexture, audio);
 
         // configure VAO 
         // -------------
@@ -196,7 +196,7 @@ public:
             deltaTime = currentFrame - lastFrame;
             lastFrame = currentFrame;
 
-            GLfloat near_plane = 0.15f, far_plane = 50.5f;
+            GLfloat near_plane = 0.15f, far_plane = 100.5f;
             //*lightProjection = glm::perspective(glm::radians(90.0f), (GLfloat)value.SHADOW_WIDTH / (GLfloat)value.SHADOW_HEIGHT, near_plane, far_plane); // note that if you use a perspective projection matrix you'll have to change the light position as the current light position isn't enough to reflect the whole scene
             *lightProjection = glm::ortho(-(GLfloat)value.SHADOW_RANGE, (GLfloat)value.SHADOW_RANGE, -(GLfloat)value.SHADOW_RANGE, (GLfloat)value.SHADOW_RANGE, near_plane, far_plane);
             *lightView = glm::lookAt(lightPos, glm::vec3(0.0f), glm::vec3(0.0, 1.0, 0.0));
@@ -211,8 +211,8 @@ public:
             // change light position over time
             if (DynamicPos == true)
             {
-                lightPos.x = sin(glfwGetTime()) * 15.5f ;
-                lightPos.z = cos(glfwGetTime()) * 15.5f ;
+                lightPos.x = sin(glfwGetTime()) * 35.5f;
+                lightPos.z = cos(glfwGetTime()) * 35.5f;
             }
             //lightPos.y = 5.0 + cos(glfwGetTime()) * 1.0f ;
             changeLightPos(window, lightPos);
@@ -232,7 +232,7 @@ public:
             glViewport(0, 0, value.SHADOW_WIDTH, value.SHADOW_HEIGHT);
             glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
             glClear(GL_DEPTH_BUFFER_BIT);
-            renderScene(Shaderlist[s_DEPTHMAP],MapList, texture, depthMaP, renderDepth = true);
+            renderScene(Shaderlist[s_DEPTHMAP], MapList, texture, depthMaP, renderDepth = true);
             renderModel(Shaderlist[s_DEPTHMAP], ModelList, depthMaP, renderDepth = true);
             glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
@@ -269,7 +269,7 @@ public:
             glActiveTexture(GL_TEXTURE1);
             glBindTexture(GL_TEXTURE_2D, depthMaP);
 
-            renderScene(Shaderlist[s_SHADOWMAP],MapList, texture, depthMaP, renderDepth = false);
+            renderScene(Shaderlist[s_SHADOWMAP], MapList, texture, depthMaP, renderDepth = false);
 
             // 4. render view model
             // --------------------
@@ -328,7 +328,7 @@ public:
         glDeleteBuffers(1, &skyboxVBO);
         delete lightProjection, lightSpaceMatrix, lightView, projection, view;
         glfwTerminate();
-        
+
         system("pause");
         return 0;
     }
@@ -336,7 +336,7 @@ public:
 private:
     // set up vertex data (and buffer(s)) and configure vertex attributes
     // ------------------------------------------------------------------
-    float planeVertices[48] = 
+    GLfloat planeVertices[48] =
     {
         // positions           // normals         // texcoords
         25.0f, -0.5f,  25.0f,  0.0f, 1.0f, 0.0f,  50.0f,  0.0f,
@@ -349,7 +349,7 @@ private:
     };
     // set up sky vertex data 
     // ----------------------
-    float skyboxVertices[108] = 
+    GLfloat skyboxVertices[108] =
     {
         // positions          
         -1.0f,  1.0f, -1.0f,
@@ -411,7 +411,7 @@ private:
 
     // render info
     // -----------
-    float ambientIntensity = 0.75f;
+    GLfloat ambientIntensity = 0.75f;
     bool renderDepth;
     glm::mat4* lightProjection = new glm::mat4;
     glm::mat4* lightView = new glm::mat4;
@@ -444,14 +444,14 @@ private:
             moveCountDown = lastFrame;
         }
         else
-        if (playerMovement == 2 && (moveCountDown == 0 || lastFrame - moveCountDown >= 0.2f))
-        {
-            audio.playSound(SoundList[5]);
-            audio.playSound(SoundList[6]);
-            audio.playSound(SoundList[7]);
-            audio.playSound(SoundList[8]);
-            moveCountDown = lastFrame;
-        }
+            if (playerMovement == 2 && (moveCountDown == 0 || lastFrame - moveCountDown >= 0.2f))
+            {
+                audio.playSound(SoundList[5]);
+                audio.playSound(SoundList[6]);
+                audio.playSound(SoundList[7]);
+                audio.playSound(SoundList[8]);
+                moveCountDown = lastFrame;
+            }
 
         if (weaponsSound == 0 && (countdown1 == 0 || lastFrame - countdown1 >= 0.1f))
         {
@@ -460,24 +460,24 @@ private:
             countdown1 = lastFrame;
         }
         else
-        if (weaponsSound == 1 && (countdown2 == 0 || lastFrame - countdown2 >= 2.0f))
-        {
-             audio.playSound(SoundList[4]);
-             countdown2 = lastFrame;
-        }
+            if (weaponsSound == 1 && (countdown2 == 0 || lastFrame - countdown2 >= 2.0f))
+            {
+                audio.playSound(SoundList[4]);
+                countdown2 = lastFrame;
+            }
     }
 
-    void readEnginConfig(const std::string& filename, EngineInfo& value) 
+    void readEnginConfig(const std::string& filename, EngineInfo& value)
     {
         std::ifstream file(filename);
 
         if (file.is_open())
         {
             std::string line;
-            while (std::getline(file, line)) 
+            while (std::getline(file, line))
             {
                 size_t pos = line.find('=');
-                if (pos != std::string::npos) 
+                if (pos != std::string::npos)
                 {
                     std::string key = line.substr(0, pos);
                     std::string getvalue = line.substr(pos + 1);
@@ -488,15 +488,15 @@ private:
                     getvalue.erase(0, getvalue.find_first_not_of(" \t"));
                     getvalue.erase(getvalue.find_last_not_of(" \t") + 1);
 
-                    if (key == "major_version") 
-                        value.MAJOR_VERSION = std::stoi(getvalue);                
-                    else 
-                    if (key == "minor_version") 
-                        value.MINOR_VERSION = std::stoi(getvalue);             
-                    else 
-                    if (key == "sample_level") 
-                        value.SAMPLES_LEVEL = std::stoi(getvalue);
-                    
+                    if (key == "major_version")
+                        value.MAJOR_VERSION = std::stoi(getvalue);
+                    else
+                        if (key == "minor_version")
+                            value.MINOR_VERSION = std::stoi(getvalue);
+                        else
+                            if (key == "sample_level")
+                                value.SAMPLES_LEVEL = std::stoi(getvalue);
+
                 }
             }
 
@@ -521,16 +521,16 @@ private:
         }
     }
 
-    void readVideoConfig(const std::string& filename, ShadowInfo& value) 
+    void readVideoConfig(const std::string& filename, ShadowInfo& value)
     {
         std::ifstream file(filename);
         if (file.is_open())
         {
             std::string line;
-            while (std::getline(file, line)) 
+            while (std::getline(file, line))
             {
                 size_t pos = line.find('=');
-                if (pos != std::string::npos) 
+                if (pos != std::string::npos)
                 {
                     std::string key = line.substr(0, pos);
                     std::string getvalue = line.substr(pos + 1);
@@ -541,26 +541,26 @@ private:
                     getvalue.erase(0, getvalue.find_first_not_of(" \t"));
                     getvalue.erase(getvalue.find_last_not_of(" \t") + 1);
 
-                    if (key == "shadow_range") 
-                        value.SHADOW_RANGE = std::stoi(getvalue);                 
-                    else 
-                    if (key == "shadow_width") 
-                        value.SHADOW_WIDTH = std::stoi(getvalue);     
-                    else 
-                    if (key == "shadow_height") 
-                        value.SHADOW_HEIGHT = std::stoi(getvalue);
-                    
+                    if (key == "shadow_range")
+                        value.SHADOW_RANGE = std::stoi(getvalue);
+                    else
+                        if (key == "shadow_width")
+                            value.SHADOW_WIDTH = std::stoi(getvalue);
+                        else
+                            if (key == "shadow_height")
+                                value.SHADOW_HEIGHT = std::stoi(getvalue);
+
                 }
             }
 
             file.close();
 
-            if (value.SHADOW_RANGE < 0) 
+            if (value.SHADOW_RANGE < 0)
             {
                 std::cout << "INVLID VALUE - RESTORE TO DEFAULT RANGE (10).";
                 value.SHADOW_RANGE = 10;
             }
-            if (value.SHADOW_WIDTH < 0 || value.SHADOW_HEIGHT < 0) 
+            if (value.SHADOW_WIDTH < 0 || value.SHADOW_HEIGHT < 0)
             {
                 std::cout << std::endl << "INVLID VALUE - RESTORE TO DEFAULT (512x512)." << std::endl;
                 value.SHADOW_WIDTH = 512;
@@ -580,8 +580,8 @@ private:
     }
 
     void engineResourceLoader(std::vector <Shader>& Shaderlist, std::vector <Model>& ModelList,
-                              std::vector <Model>& MapList, std::vector <SoundInfo>& SoundList, 
-                              std::vector <unsigned int>& Texture, unsigned int & cubemapTexture, AudioEngine& audio)
+        std::vector <Model>& MapList, std::vector <SoundInfo>& SoundList,
+        std::vector <unsigned int>& Texture, unsigned int& cubemapTexture, AudioEngine& audio)
     {
         // build and compile shaders
         // -------------------------
@@ -659,9 +659,8 @@ private:
         // Initialize audio engine
         std::cout << std::endl;
         audio.init();
-        for(int i=0;i<SoundList.size();i++)
+        for (int i = 0; i < SoundList.size(); i++)
             audio.loadSound(SoundList[i]);
     }
 };
-
 #endif

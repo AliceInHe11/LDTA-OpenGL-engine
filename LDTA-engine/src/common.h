@@ -71,11 +71,11 @@ void renderQuad();
 glm::mat4 model;
 
 // timing
-float deltaTime = 0.0f;
-float lastFrame = 0.0f;
+GLfloat deltaTime = 0.0f;
+GLfloat lastFrame = 0.0f;
 
 // light position
-glm::vec3 lightPos(3.0f, 10.0f, 3.0f);
+glm::vec3 lightPos(3.0f, 30.0f, 3.0f);
 bool DynamicPos = true;
 
 // weapon switch
