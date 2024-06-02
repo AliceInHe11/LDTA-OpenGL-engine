@@ -10,7 +10,7 @@ extern "C"
 
 #include "engine.h"
 
-int main()
+int main(int argc, char** argv)
 {
     Engine LDTA;
     return LDTA.engineRun();

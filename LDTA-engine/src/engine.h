@@ -27,7 +27,7 @@ public:
             std::cout << "Failed to initializes the GLFW libary !\n";
             SET_COLOR(WHITE);
             system("pause");
-            return -1;
+            return EXIT_FAILURE;
         }
 
         EngineInfo engineConfig;
@@ -58,7 +58,7 @@ public:
             SET_COLOR(WHITE);
             glfwTerminate();
             system("pause");
-            return -1;
+            return EXIT_FAILURE;
         }
 
         GLFWimage images[1];
@@ -90,7 +90,7 @@ public:
             SET_COLOR(WHITE);
             glfwTerminate();
             system("pause");
-            return -1;
+            return EXIT_FAILURE;
         }
         else
         {
@@ -265,19 +265,11 @@ public:
             Shaderlist[s_SHADOWMAP].setVec3("lightPos", lightPos);
             Shaderlist[s_SHADOWMAP].setVec3("lightColor", lightColor);
             Shaderlist[s_SHADOWMAP].setMat4("lightSpaceMatrix", *lightSpaceMatrix);
-
             glActiveTexture(GL_TEXTURE1);
             glBindTexture(GL_TEXTURE_2D, depthMaP);
-
             renderScene(Shaderlist[s_SHADOWMAP], MapList, texture, depthMaP, renderDepth = false);
 
-            // 4. render view model
-            // --------------------
-            //glDepthFunc(GL_ALWAYS);
-            renderViewmodel(Shaderlist[s_MODELDRAW], ModelList, *projection, *view, weaponsNum);
-            //glDepthFunc(GL_LESS);
-
-            // 5. render skybox as last
+            // 6. render skybox as last
             // ------------------------
             glDepthFunc(GL_LEQUAL);  // change depth function so depth test passes when values are equal to depth buffer's content
             Shaderlist[s_SKYBOX].use();
@@ -296,6 +288,11 @@ public:
             glDrawArrays(GL_TRIANGLES, 0, 36);
             glBindVertexArray(0);
             glDepthFunc(GL_LESS); // set depth function back to default
+
+            // 5. render view model
+            // --------------------
+            glClear(GL_DEPTH_BUFFER_BIT);
+            renderViewmodel(Shaderlist[s_MODELDRAW], ModelList, *projection, *view, weaponsNum);
 
             // 6. play sound effect (gunshot,footstep,...)
             // -------------------------------------------
@@ -330,7 +327,7 @@ public:
         glfwTerminate();
 
         system("pause");
-        return 0;
+        return EXIT_SUCCESS;
     }
 
 private:

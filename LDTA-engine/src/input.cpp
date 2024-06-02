@@ -1,7 +1,7 @@
 // camera
 Camera camera(glm::vec3(-3.0f, 3.0f, 3.0f));
-float lastX = (float)ScreenValue.SCR_WIDTH / 2.0;
-float lastY = (float)ScreenValue.SCR_HEIGHT / 2.0;
+GLfloat lastX = (GLfloat)ScreenValue.SCR_WIDTH / 2.0;
+GLfloat lastY = (GLfloat)ScreenValue.SCR_HEIGHT / 2.0;
 bool firstMouse = true;
 
 static void setWindowPosition(ScreenInfo ScreenValue, WindowsPosition &WindowsPos)
@@ -184,6 +184,15 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
         else
             DynamicPos = true;
 
+    if (glfwGetKey(window, GLFW_KEY_PAGE_UP) == GLFW_PRESS)
+        camera.MouseSensitivity += 0.001f;
+    else
+    if (glfwGetKey(window, GLFW_KEY_PAGE_DOWN) == GLFW_PRESS)
+        if(camera.MouseSensitivity <= 0)
+            camera.MouseSensitivity = 0.0f;
+        else
+            camera.MouseSensitivity -= 0.001f;
+
     if (key == GLFW_KEY_1 && action == GLFW_PRESS)
         weaponsNum = 0;
     else
@@ -260,7 +269,7 @@ void changeLightPos(GLFWwindow* window, glm::vec3& lightPos)
             lightPos.x -= 0.25f;
 }
 
-void changeLightInfo(GLFWwindow* window, glm::vec3& lightColor, float& ambientIntensity) 
+void changeLightInfo(GLFWwindow* window, glm::vec3& lightColor, GLfloat& ambientIntensity)
 {
     if (glfwGetKey(window, GLFW_KEY_RIGHT_SHIFT) == GLFW_PRESS)
     {
