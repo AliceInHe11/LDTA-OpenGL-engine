@@ -608,7 +608,7 @@ private:
         ModelList.push_back(Model("resources/objects/woodentower/woodentower.obj"));
         ModelList.push_back(Model("resources/objects/container/container.obj"));
         ModelList.push_back(Model("resources/objects/viking_room/viking_room.obj"));
-        ModelList.push_back(Model("resources/objects/weapons/ak47.obj"));
+        ModelList.push_back(Model("resources/objects/weapons/AK_47.obj"));
         ModelList.push_back(Model("resources/objects/weapons/StingSword.obj"));
 
         // load map
