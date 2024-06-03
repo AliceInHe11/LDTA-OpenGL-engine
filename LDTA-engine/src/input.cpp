@@ -240,6 +240,9 @@ void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
     }
     else
         weaponsSound = -1;
+
+    if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_RELEASE)
+        weaponsTap = true;
 }
 
 void changeLightPos(GLFWwindow* window, glm::vec3& lightPos) 

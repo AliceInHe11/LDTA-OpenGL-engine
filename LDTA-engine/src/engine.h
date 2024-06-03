@@ -441,27 +441,28 @@ private:
             moveCountDown = lastFrame;
         }
         else
-            if (playerMovement == 2 && (moveCountDown == 0 || lastFrame - moveCountDown >= 0.2f))
-            {
-                audio.playSound(SoundList[5]);
-                audio.playSound(SoundList[6]);
-                audio.playSound(SoundList[7]);
-                audio.playSound(SoundList[8]);
-                moveCountDown = lastFrame;
-            }
+        if (playerMovement == 2 && (moveCountDown == 0 || lastFrame - moveCountDown >= 0.2f))
+        {
+            audio.playSound(SoundList[5]);
+            audio.playSound(SoundList[6]);
+            audio.playSound(SoundList[7]);
+            audio.playSound(SoundList[8]);
+            moveCountDown = lastFrame;
+        }
 
-        if (weaponsSound == 0 && (countdown1 == 0 || lastFrame - countdown1 >= 0.1f))
+        if (weaponsSound == 0 && weaponsNum == 0 && (countdown1 == 0 || lastFrame - countdown1 >= 0.1f))
         {
             audio.playSound(SoundList[2]);
             audio.playSound(SoundList[3]);
             countdown1 = lastFrame;
         }
         else
-            if (weaponsSound == 1 && (countdown2 == 0 || lastFrame - countdown2 >= 2.0f))
-            {
-                audio.playSound(SoundList[4]);
-                countdown2 = lastFrame;
-            }
+        if (weaponsSound == 1 && weaponsNum == 1 && weaponsTap == 1 && (countdown2 == 0 || lastFrame - countdown2 >= 0.15f))
+        {
+            audio.playSound(SoundList[4]);
+            countdown2 = lastFrame;
+            weaponsTap = false;
+        }
     }
 
     void readEnginConfig(const std::string& filename, EngineInfo& value)
@@ -609,6 +610,7 @@ private:
         ModelList.push_back(Model("resources/objects/container/container.obj"));
         ModelList.push_back(Model("resources/objects/viking_room/viking_room.obj"));
         ModelList.push_back(Model("resources/objects/weapons/AK_47.obj"));
+        ModelList.push_back(Model("resources/objects/weapons/USP.obj"));
         ModelList.push_back(Model("resources/objects/weapons/StingSword.obj"));
 
         // load map
@@ -644,11 +646,11 @@ private:
         // Initialize Audio Engine and Load sounds
         // ---------------------------------------
         // load sound 
-        SoundList.push_back(SoundInfo("resources/audio/bgm_track2_loop.mp3", 0.025f, 2.0f, SOUND_LOOP));
-        SoundList.push_back(SoundInfo("resources/audio/bgm_track1_loop.mp3", 0.025f, 2.0f, SOUND_LOOP));
+        SoundList.push_back(SoundInfo("resources/audio/bgm_track2_loop.mp3", 0.01f, 2.0f, SOUND_LOOP));
+        SoundList.push_back(SoundInfo("resources/audio/bgm_track1_loop.mp3", 0.01f, 2.0f, SOUND_LOOP));
         SoundList.push_back(SoundInfo("resources/audio/AK47_Fire1.wav", 0.0075f, 2.0f, SOUND_ONE_SHOT));
         SoundList.push_back(SoundInfo("resources/audio/AK47_Fire2.wav", 0.075f, 2.0f, SOUND_ONE_SHOT));
-        SoundList.push_back(SoundInfo("resources/audio/D.mp3", 0.175f, 9.0f, SOUND_ONE_SHOT));
+        SoundList.push_back(SoundInfo("resources/audio/UPS_FIRE.wav", 0.075f, 3.0f, SOUND_ONE_SHOT));
         SoundList.push_back(SoundInfo("resources/audio/player_step_1.wav", 0.05f, 3.0f, SOUND_ONE_SHOT));
         SoundList.push_back(SoundInfo("resources/audio/player_step_2.wav", 0.05f, 3.0f, SOUND_ONE_SHOT));
         SoundList.push_back(SoundInfo("resources/audio/player_step_3.wav", 0.05f, 3.0f, SOUND_ONE_SHOT));

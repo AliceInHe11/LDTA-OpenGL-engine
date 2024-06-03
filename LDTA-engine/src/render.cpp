@@ -416,13 +416,13 @@ static void renderViewmodel(Shader& shader, std::vector <Model>& ModelList, glm:
 
         case 1:
             model = glm::mat4(1.0f);
-            model = glm::translate(model, glm::vec3(0.35f, -0.50f, -0.95f));
-            model = glm::rotate(model, glm::radians(-90.0f), glm::vec3(0.0, 1.0, 0.0));
-            model = glm::scale(model, glm::vec3(0.15f));
+            model = glm::translate(model, glm::vec3(0.45f, -0.75f, -0.95f));
+            model = glm::rotate(model, glm::radians(-95.0f), glm::vec3(0.0, 1.0, 0.0));
+            model = glm::scale(model, glm::vec3(4.15f));
             model = glm::inverse(view) * model;
 
             shader.setMat4("model", model);
-            ModelList[0].Draw_m(shader);
+            ModelList[13].Draw_m(shader);
 
             break;
 
@@ -436,7 +436,7 @@ static void renderViewmodel(Shader& shader, std::vector <Model>& ModelList, glm:
             model = glm::inverse(view) * model;
 
             shader.setMat4("model", model);
-            ModelList[13].Draw_m(shader);
+            ModelList[14].Draw_m(shader);
 
             break;
 

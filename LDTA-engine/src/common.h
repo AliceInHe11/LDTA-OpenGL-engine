@@ -80,6 +80,7 @@ bool DynamicPos = true;
 // weapon switch
 unsigned int weaponsNum = 0;
 int weaponsSound = -1;
+bool weaponsTap = true;
 
 // player movement
 int playerMovement = -1;
