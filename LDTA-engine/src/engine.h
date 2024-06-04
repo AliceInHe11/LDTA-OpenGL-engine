@@ -291,7 +291,7 @@ public:
 
             // 5. render view model
             // --------------------
-            glClear(GL_DEPTH_BUFFER_BIT);
+            glClear(GL_DEPTH_BUFFER_BIT); // clear the depth buffer to avoid cliping model
             renderViewmodel(Shaderlist[s_MODELDRAW], ModelList, *projection, *view, weaponsNum);
 
             // 6. play sound effect (gunshot,footstep,...)

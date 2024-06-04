@@ -211,7 +211,7 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
         weaponsSelect = true;
     }
 
-    if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
+    if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS && glfwGetKey(window, GLFW_KEY_C) == GLFW_RELEASE)
         playerMovement = -1;
     else
     if (glfwGetKey(window, GLFW_KEY_C) == GLFW_PRESS)
