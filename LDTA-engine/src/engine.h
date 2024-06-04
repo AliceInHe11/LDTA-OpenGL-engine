@@ -454,14 +454,34 @@ private:
         {
             audio.playSound(SoundList[2]);
             audio.playSound(SoundList[3]);
+            audio.playSound(SoundList[9]);
             countdown1 = lastFrame;
         }
         else
-        if (weaponsSound == 1 && weaponsNum == 1 && weaponsTap == 1 && (countdown2 == 0 || lastFrame - countdown2 >= 0.15f))
+        if (weaponsSound == 1 && weaponsNum == 1 && weaponsTap == true && (countdown2 == 0 || lastFrame - countdown2 >= 0.15f))
         {
             audio.playSound(SoundList[4]);
+            audio.playSound(SoundList[9]);
             countdown2 = lastFrame;
             weaponsTap = false;
+        }
+
+        if (weaponsNum == 0 && weaponsSelect == true)
+        {
+            audio.playSound(SoundList[10]);
+            weaponsSelect = false;
+        }
+        else
+        if (weaponsNum == 1 && weaponsSelect == true)
+        {
+            audio.playSound(SoundList[11]);
+            weaponsSelect = false;
+        }
+        else
+        if (weaponsNum == 2 && weaponsSelect == true)
+        {
+            audio.playSound(SoundList[12]);
+            weaponsSelect = false;
         }
     }
 
@@ -646,15 +666,19 @@ private:
         // Initialize Audio Engine and Load sounds
         // ---------------------------------------
         // load sound 
-        SoundList.push_back(SoundInfo("resources/audio/bgm_track2_loop.mp3", 0.01f, 2.0f, SOUND_LOOP));
-        SoundList.push_back(SoundInfo("resources/audio/bgm_track1_loop.mp3", 0.01f, 2.0f, SOUND_LOOP));
-        SoundList.push_back(SoundInfo("resources/audio/AK47_Fire1.wav", 0.0075f, 2.0f, SOUND_ONE_SHOT));
-        SoundList.push_back(SoundInfo("resources/audio/AK47_Fire2.wav", 0.075f, 2.0f, SOUND_ONE_SHOT));
-        SoundList.push_back(SoundInfo("resources/audio/UPS_FIRE.wav", 0.075f, 3.0f, SOUND_ONE_SHOT));
-        SoundList.push_back(SoundInfo("resources/audio/player_step_1.wav", 0.05f, 3.0f, SOUND_ONE_SHOT));
-        SoundList.push_back(SoundInfo("resources/audio/player_step_2.wav", 0.05f, 3.0f, SOUND_ONE_SHOT));
-        SoundList.push_back(SoundInfo("resources/audio/player_step_3.wav", 0.05f, 3.0f, SOUND_ONE_SHOT));
-        SoundList.push_back(SoundInfo("resources/audio/player_step_4.wav", 0.05f, 3.0f, SOUND_ONE_SHOT));
+        SoundList.push_back(SoundInfo("resources/audios/bgm_track2_loop.mp3", 0.01f, 2.0f, SOUND_LOOP));
+        SoundList.push_back(SoundInfo("resources/audios/bgm_track1_loop.mp3", 0.01f, 2.0f, SOUND_LOOP));
+        SoundList.push_back(SoundInfo("resources/audios/AK47_Fire1.wav", 0.0075f, 2.0f, SOUND_ONE_SHOT));
+        SoundList.push_back(SoundInfo("resources/audios/AK47_Fire2.wav", 0.075f, 2.0f, SOUND_ONE_SHOT));
+        SoundList.push_back(SoundInfo("resources/audios/USP_FIRE.wav", 0.075f, 3.0f, SOUND_ONE_SHOT));
+        SoundList.push_back(SoundInfo("resources/audios/player_step_1.wav", 0.05f, 3.0f, SOUND_ONE_SHOT));
+        SoundList.push_back(SoundInfo("resources/audios/player_step_2.wav", 0.05f, 3.0f, SOUND_ONE_SHOT));
+        SoundList.push_back(SoundInfo("resources/audios/player_step_3.wav", 0.05f, 3.0f, SOUND_ONE_SHOT));
+        SoundList.push_back(SoundInfo("resources/audios/player_step_4.wav", 0.05f, 3.0f, SOUND_ONE_SHOT));
+        SoundList.push_back(SoundInfo("resources/audios/Shell_Casting.wav", 0.15f, 3.0f, SOUND_ONE_SHOT));
+        SoundList.push_back(SoundInfo("resources/audios/AK47_SELECT.wav", 0.085f, 3.0f, SOUND_ONE_SHOT));
+        SoundList.push_back(SoundInfo("resources/audios/USP_SELECT.wav", 0.085f, 3.0f, SOUND_ONE_SHOT));
+        SoundList.push_back(SoundInfo("resources/audios/SWORD_SELECT.wav", 0.085f, 3.0f, SOUND_ONE_SHOT));
         // Initialize audio engine
         std::cout << std::endl;
         audio.init();

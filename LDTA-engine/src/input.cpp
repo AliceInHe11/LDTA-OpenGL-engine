@@ -194,13 +194,22 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
             camera.MouseSensitivity -= 0.001f;
 
     if (key == GLFW_KEY_1 && action == GLFW_PRESS)
+    {
         weaponsNum = 0;
+        weaponsSelect = true;
+    }
     else
     if (key == GLFW_KEY_2 && action == GLFW_PRESS)
+    {
         weaponsNum = 1;
+        weaponsSelect = true;
+    }
     else
     if (key == GLFW_KEY_3 && action == GLFW_PRESS)
+    {
         weaponsNum = 2;
+        weaponsSelect = true;
+    }
 
     if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
         playerMovement = -1;
