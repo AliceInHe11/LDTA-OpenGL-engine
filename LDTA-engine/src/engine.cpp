@@ -12,8 +12,8 @@ extern "C"
 
 int main(int argc, char** argv)
 {
-    Engine LDTA;
-    return LDTA.engineRun();
+    Engine* LDTA = new Engine;
+    return LDTA->engineRun();
 }
 
 #endif

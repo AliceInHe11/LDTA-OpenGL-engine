@@ -114,7 +114,7 @@ public:
         cubeVAO = 0;
         quadVAO = 0;
         unsigned int cubemapTexture;
-        engineResourceLoader(Shaderlist, ModelList, MapList, SoundList, texture, cubemapTexture, audio);
+        engineAssetLoader(Shaderlist, ModelList, MapList, SoundList, texture, cubemapTexture, audio);
 
         // configure VAO 
         // -------------
@@ -458,7 +458,7 @@ private:
             countdown1 = lastFrame;
         }
         else
-        if (weaponsSound == 1 && weaponsNum == 1 && weaponsTap == true && (countdown2 == 0 || lastFrame - countdown2 >= 0.15f))
+        if (weaponsSound == 1 && weaponsNum == 1 && weaponsTap == true && (countdown2 == 0 || lastFrame - countdown2 >= 0.2f))
         {
             audio.playSound(SoundList[4]);
             audio.playSound(SoundList[9]);
@@ -597,7 +597,7 @@ private:
         }
     }
 
-    void engineResourceLoader(std::vector <Shader>& Shaderlist, std::vector <Model>& ModelList,
+    void engineAssetLoader(std::vector <Shader>& Shaderlist, std::vector <Model>& ModelList,
         std::vector <Model>& MapList, std::vector <SoundInfo>& SoundList,
         std::vector <unsigned int>& Texture, unsigned int& cubemapTexture, AudioEngine& audio)
     {
@@ -614,6 +614,7 @@ private:
         // load models
         // ------------
         // tell stb_image.h to flip loaded texture's on the y-axis (before loading model).
+        ModelList.reserve(15);
         std::cout << std::endl;
         stbi_set_flip_vertically_on_load(true);
         ModelList.push_back(Model("resources/objects/backpack/backpack.obj"));
@@ -636,6 +637,7 @@ private:
         // load map
         // --------
         std::cout << std::endl;
+        MapList.reserve(3);
         MapList.push_back(Model("resources/maps/dust_2/de_dust2.obj"));
         MapList.push_back(Model("resources/maps/desert/DesertMap.obj"));
         MapList.push_back(Model("resources/maps/italy/cs_italy.obj"));
