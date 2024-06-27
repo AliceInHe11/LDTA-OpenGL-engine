@@ -69,6 +69,10 @@ void renderQuad();
 // ------------------------------
 glm::mat4 model;
 
+// Disable/Enable texrure for render
+bool texture_Enable = false;
+bool texture_Disable = true;
+
 // timing
 GLfloat deltaTime = 0.0f;
 GLfloat lastFrame = 0.0f;

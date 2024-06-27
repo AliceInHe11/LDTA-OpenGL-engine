@@ -109,6 +109,7 @@ public:
         glEnable(GL_DEPTH_TEST);
         glEnable(GL_MULTISAMPLE);
 
+
         // set up render data 
         // ------------------
         cubeVAO = 0;
@@ -196,14 +197,14 @@ public:
             deltaTime = currentFrame - lastFrame;
             lastFrame = currentFrame;
 
-            GLfloat near_plane = 0.15f, far_plane = 100.5f;
-            //*lightProjection = glm::perspective(glm::radians(90.0f), (GLfloat)value.SHADOW_WIDTH / (GLfloat)value.SHADOW_HEIGHT, near_plane, far_plane); // note that if you use a perspective projection matrix you'll have to change the light position as the current light position isn't enough to reflect the whole scene
-            *lightProjection = glm::ortho(-(GLfloat)value.SHADOW_RANGE, (GLfloat)value.SHADOW_RANGE, -(GLfloat)value.SHADOW_RANGE, (GLfloat)value.SHADOW_RANGE, near_plane, far_plane);
-            *lightView = glm::lookAt(lightPos, glm::vec3(0.0f), glm::vec3(0.0, 1.0, 0.0));
-            *lightSpaceMatrix = *lightProjection * *lightView;
-
             *projection = glm::perspective(glm::radians(camera.Zoom), (GLfloat)ScreenValue.SCR_WIDTH / (GLfloat)ScreenValue.SCR_HEIGHT, 0.1f, 100.0f);
             *view = camera.GetViewMatrix();
+
+            GLfloat near_plane = 0.15f, far_plane = 100.0f;
+            //*lightProjection = glm::perspective(glm::radians(90.0f), (GLfloat)value.SHADOW_WIDTH / (GLfloat)value.SHADOW_HEIGHT, near_plane, far_plane); // note that if you use a perspective projection matrix you'll have to change the light position as the current light position isn't enough to reflect the whole scene
+            *lightProjection = glm::ortho(-(GLfloat)value.SHADOW_RANGE, (GLfloat)value.SHADOW_RANGE, -(GLfloat)value.SHADOW_RANGE, (GLfloat)value.SHADOW_RANGE, near_plane, far_plane);
+            *lightView = glm::lookAt(lightPos, glm::vec3(camera.Position.x,0.0f, camera.Position.z), glm::vec3(0.0, 1.0, 0.0));
+            *lightSpaceMatrix = *lightProjection * *lightView;
 
             // input
             // -----
@@ -211,8 +212,8 @@ public:
             // change light position over time
             if (DynamicPos == true)
             {
-                lightPos.x = sin(glfwGetTime()) * 35.5f;
-                lightPos.z = cos(glfwGetTime()) * 35.5f;
+                lightPos.x = sin(glfwGetTime()) * 15.5f;
+                lightPos.z = cos(glfwGetTime()) * 15.5f;
             }
             //lightPos.y = 5.0 + cos(glfwGetTime()) * 1.0f ;
             changeLightPos(window, lightPos);
@@ -232,8 +233,10 @@ public:
             glViewport(0, 0, value.SHADOW_WIDTH, value.SHADOW_HEIGHT);
             glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
             glClear(GL_DEPTH_BUFFER_BIT);
-            renderScene(Shaderlist[s_DEPTHMAP], MapList, texture, depthMaP, renderDepth = true);
-            renderModel(Shaderlist[s_DEPTHMAP], ModelList, depthMaP, renderDepth = true);
+
+            renderScene(Shaderlist[s_DEPTHMAP], MapList, texture, depthMaP, texture_Disable);
+            renderModel(Shaderlist[s_DEPTHMAP], ModelList, depthMaP, texture_Disable);
+
             glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
             // reset viewport
@@ -253,7 +256,7 @@ public:
 
             glActiveTexture(GL_TEXTURE1);
             glBindTexture(GL_TEXTURE_2D, depthMaP);
-            renderModel(Shaderlist[s_NORMALMAP], ModelList, depthMaP, renderDepth = false);
+            renderModel(Shaderlist[s_NORMALMAP], ModelList, depthMaP, texture_Enable);
 
             // 3. render scene as normal using the generated depth/shadow map  
             // --------------------------------------------------------------
@@ -267,7 +270,7 @@ public:
             Shaderlist[s_SHADOWMAP].setMat4("lightSpaceMatrix", *lightSpaceMatrix);
             glActiveTexture(GL_TEXTURE1);
             glBindTexture(GL_TEXTURE_2D, depthMaP);
-            renderScene(Shaderlist[s_SHADOWMAP], MapList, texture, depthMaP, renderDepth = false);
+            renderScene(Shaderlist[s_SHADOWMAP], MapList, texture, depthMaP, texture_Enable);
 
             // 6. render skybox as last
             // ------------------------

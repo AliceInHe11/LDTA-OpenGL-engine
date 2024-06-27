@@ -4,16 +4,16 @@
 // ---------------------------------------------
 extern "C" 
 {
-    __declspec(dllexport) unsigned __int64 AmdPowerXpressRequestHighPerformance = 0x00000001;
-    __declspec(dllexport) unsigned __int64 NvOptimusEnablement = 0x00000001;
+    __declspec(dllexport) unsigned __int64 AmdPowerXpressRequestHighPerformance = 0x01;
+    __declspec(dllexport) unsigned __int64 NvOptimusEnablement = 0x01;
 }
 
 #include "engine.h"
 
 int main(int argc, char** argv)
 {
-    Engine* LDTA = new Engine;
-    return LDTA->engineRun();
+    Engine LDTA;
+    return LDTA.engineRun();
 }
 
 #endif
